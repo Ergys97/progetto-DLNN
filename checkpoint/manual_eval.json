@@ -1,0 +1,62 @@
+{
+  "q01": {
+    "faithfulness": 1,
+    "answer_relevance": 1
+  },
+  "q02": {
+    "faithfulness": 5,
+    "answer_relevance": 5
+  },
+  "q03": {
+    "faithfulness": 4,
+    "answer_relevance": 5
+  },
+  "q04": {
+    "faithfulness": 4,
+    "answer_relevance": 4
+  },
+  "q05": {
+    "faithfulness": 5,
+    "answer_relevance": 5
+  },
+  "q06": {
+    "faithfulness": 2,
+    "answer_relevance": 4
+  },
+  "q07": {
+    "faithfulness": 1,
+    "answer_relevance": 1
+  },
+  "q08": {
+    "faithfulness": 5,
+    "answer_relevance": 5
+  },
+  "q09": {
+    "faithfulness": 3,
+    "answer_relevance": 4
+  },
+  "q10": {
+    "faithfulness": 4,
+    "answer_relevance": 5
+  },
+  "q11": {
+    "faithfulness": 4,
+    "answer_relevance": 4
+  },
+  "q12": {
+    "faithfulness": 3,
+    "answer_relevance": 3
+  },
+  "q13": {
+    "faithfulness": 3,
+    "answer_relevance": 4
+  },
+  "q14": {
+    "faithfulness": 4,
+    "answer_relevance": 4
+  },
+  "q15": {
+    "faithfulness": 4,
+    "answer_relevance": 5
+  }
+}
