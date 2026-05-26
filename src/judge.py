@@ -121,12 +121,20 @@ def judge_response(
             {'role': 'user',   'content': prompt},
         ],
         temperature=0.0,
-        max_tokens=300,
+        max_tokens=2048,
     )
     if judge_backend == 'ollama':
         # Suppress chain-of-thought on thinking models (Ollama ≥ 0.5)
         kwargs['extra_body'] = {'think': False}
-    elif judge_model not in _NO_JSON_MODE:
+    elif judge_backend == 'deepseek':
+        # Suppress chain-of-thought on DeepSeek models (thinking mode)
+        kwargs['extra_body'] = {
+            'thinking': {
+                'type': 'disabled'
+            }
+        }
+
+    if judge_backend != 'ollama' and judge_model not in _NO_JSON_MODE:
         kwargs['response_format'] = {'type': 'json_object'}
 
     resp    = client.chat.completions.create(**kwargs)

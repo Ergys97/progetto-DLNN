@@ -5,10 +5,8 @@
     "query": "Come funziona la tecnica write-back nella cache? Cos'e' il dirty bit?",
     "gt_answer": "In write-back: in caso di hit, il dato viene scritto solo nella cache, il dirty bit viene posto a 1. Il blocco e' trasferito in memoria principale solo quando viene rimpiazzato e solo se dirty bit=1.",
     "expected_ids": [
-      "L19_Cache.pdf::0085::13d66bbf",
       "L19_Cache.pdf::0035::13d66bbf",
-      "L19_Cache.pdf::0034::a90ae938",
-      "L19_Cache.pdf::0084::a90ae938"
+      "L19_Cache.pdf::0034::a90ae938"
     ],
     "status": "answered",
     "min_distance": 0.258980393409729,
@@ -85,7 +83,6 @@
     "gt_answer": "CPI = somma(fi * CPIi) dove fi e' la frequenza relativa della classe i e CPIi il numero di cicli per quella classe. Es: Load=5cicli, Store=4, Formato-R=4, Salti=3 con le rispettive frequenze.",
     "expected_ids": [
       "L12_CPUmulticiclo.pdf::0061::6fe5683f",
-      "L12_CPUmulticiclo.pdf::0140::6fe5683f",
       "L16_Esercizi_Pipeline_Base.pdf::0003::b298d267"
     ],
     "status": "answered",
@@ -112,7 +109,7 @@
     "expected_ids": [
       "4)ArchitetturaSistemiOperativi.pdf::0018::d55968ed",
       "4)ArchitetturaSistemiOperativi.pdf::0020::f5c11ba6",
-      "4)ArchitetturaSistemiOperativi.pdf::0029::6b3e85f1"
+      "4)ArchitetturaSistemiOperativi.pdf::0023::545efc25"
     ],
     "status": "answered",
     "min_distance": 0.3137568235397339,
@@ -162,11 +159,10 @@
     "query": "Spiega le criticita' di tipo data hazard nella pipeline e come vengono gestite con forwarding e stall.",
     "gt_answer": "Data hazard: un'istruzione dipende dal risultato non ancora disponibile di una precedente. Forwarding propaga il risultato direttamente dall'uscita di EX o MEM all'ingresso dell'ALU. Per load-use hazard (forwarding insufficiente) si inserisce uno stall di 1 ciclo.",
     "expected_ids": [
-      "CALCOL[21-06a]_15.06.21.pdf::0014::39e1af24",
       "CALCOL[20-09]_09.09.20.pdf::0004::1c18fbb1",
-      "L17_Pipeline_Criticit.pdf::0111::c95e8fc4",
       "L17_Pipeline_Criticit.pdf::0001::c95e8fc4",
-      "L18_Esercizi_Pipeline_Critic.pdf::0086::78c935f1"
+      "L18_Esercizi_Pipeline_Critic.pdf::0086::78c935f1",
+      "L17_Pipeline_Criticit.pdf::0053::cbe8b852"
     ],
     "status": "answered",
     "min_distance": 0.3465094566345215,
@@ -221,8 +217,8 @@
       "10+)PaginazioneSegmentazione.pdf::0035::4ed3d44b",
       "10+)PaginazioneSegmentazione.pdf::0036::3f1cba40",
       "10+)PaginazioneSegmentazione.pdf::0028::68f2703a",
-      "1)IntroduzioneSistemiOperativi.pdf::0019::0b0543b7",
-      "10+)PaginazioneSegmentazione.pdf::0033::9f63b8fa"
+      "10+)PaginazioneSegmentazione.pdf::0033::9f63b8fa",
+      "10+)PaginazioneSegmentazione.pdf::0032::931137dd"
     ],
     "status": "answered",
     "min_distance": 0.3002583384513855,
@@ -249,7 +245,6 @@
       "8_Diagrammi_classi2.0.pdf::0065::2e936db8",
       "Ingegneria_del_software.pdf::0315::eb910048",
       "8_Diagrammi_classi2.0.pdf::0062::cb690747",
-      "8_Diagrammi_classi2.0.pdf::0015::bd83ca42",
       "8_Diagrammi_classi2.0.pdf::0067::2ee1307e"
     ],
     "status": "answered",
@@ -421,8 +416,7 @@
     "query": "Come funziona il predicato append/3 in Prolog?",
     "gt_answer": "append([], X, X). append([H|T], Y, [H|Z]) :- append(T, Y, Z). Concatena due liste decomponendo ricorsivamente la prima testa per testa. Es: append([inglese, russo], [spagnolo], L) => L = [inglese, russo, spagnolo].",
     "expected_ids": [
-      "lp-esercizi-prolog.pdf::0072::06444099",
-      "9.lp-esercizi-prolog.pdf::0072::06444099"
+      "6.lp-logico.pdf::0033::e6b1b979"
     ],
     "status": "refused_ood",
     "min_distance": 0.41807252168655396,

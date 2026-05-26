@@ -1,0 +1,12 @@
+python-dotenv
+numpy
+openai
+chromadb
+sentence-transformers
+rank-bm25
+pandas
+seaborn
+matplotlib
+scipy
+bert-score
+groq

@@ -77,8 +77,8 @@ import src.config as cfg
 # ── Override qui se necessario ───────────────────────────────────────────
 # cfg.GENERATOR_BACKEND = 'ollama'
 # cfg.GENERATOR_MODEL   = 'gemma4:e4b'
-# cfg.JUDGE_BACKEND     = 'groq'
-# cfg.JUDGE_MODEL       = 'llama-3.3-70b-versatile'
+# cfg.JUDGE_BACKEND     = 'deepseek'
+# cfg.JUDGE_MODEL       = 'deepseek-v4-pro'
 
 cfg.print_status()\
 """),
@@ -627,7 +627,7 @@ import time as _time
 ALL_MODELS = [
     {'id': 'gemma4:e2b',              'label': 'Gemma 4 2B (locale)',   'backend': 'ollama'},
     {'id': 'gemma4:e4b',              'label': 'Gemma 4 4B (locale)',   'backend': 'ollama'},
-    {'id': 'gemma4:26b',              'label': 'Gemma 4 26B (locale)',  'backend': 'ollama'},
+    {'id': 'hf.co/Jiunsong/supergemma4-26b-uncensored-gguf-v2:Q4_K_M', 'label': 'Gemma 4 26B (locale)',  'backend': 'ollama'},
     {'id': 'llama-3.3-70b-versatile', 'label': 'Llama 3.3 70B (Groq)', 'backend': 'groq'},
     {'id': 'deepseek-v4-flash',       'label': 'DeepSeek V4 Flash',     'backend': 'deepseek'},
 ]
