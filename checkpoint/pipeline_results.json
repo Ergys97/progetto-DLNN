@@ -1,5 +1,26 @@
 [
   {
+    "id": "q01",
+    "category": "in_domain_direct",
+    "query": "Cosa sono le regole di inferenza di Armstrong nelle basi di dati?",
+    "gt_answer": "Riflessivita (Y incluso in X => X->Y), Aggiunta (X->Y => XZ->YZ), Transitivita (X->Y e Y->Z => X->Z). Servono a calcolare la chiusura F+ di un insieme di dipendenze funzionali F.",
+    "expected_ids": [
+      "15NORM.pdf::0012::7b91863d"
+    ],
+    "status": "answered",
+    "min_distance": 0.3481244444847107,
+    "retrieved_ids": [
+      "15NORM.pdf::0012::7b91863d",
+      "5.simplesso_casi_particolari.pdf::0010::256efde5",
+      "Appunti_PS_10_Campionamento.pdf::0000::77a5e2e6",
+      "8-ProgettoClassi.pdf::0079::f6d7597b",
+      "12.EsSQLAccess_1.pdf::0015::d98cb7b9"
+    ],
+    "context": "NORM-14\nRegole di inferenza di Armstrong\nDato F, come possiamo calcolare F+, cioè tutte le \ndipendenze funzionali logicamente implicate da  F?\nMediante le regole di inferenza di Armstrong:\n1. Riflessività: Se Y X, allora X Y\n2. Aggiunta: Se X Y, allora X Z Y Z, per \nqualunque Z\n3. Transitività: Se X Y e Y Z, allora X Z\nDove X,Y,Z sono sottoinsiemi di U.\n\n---\n\nfunzione obiettivo rimane costante.\n• Regola di Bland: se usassimo un qualsiasi criterio deterministico per la scelta\ndella variabile entrante e della variabile uscente, l’algoritmo genererebbe la\nstessa sequenza di basi ammissibili inde￿nitamente. Usando la regola di Bland\nevitiamo che questo succeda impedendo al simplesso di ciclare.\nRicerca Operativa - Programmazione Lineare\n￿￿/￿￿\ni\nDesai\nciclo infinito\n\n---\n\nUniversit`a degli Studi di Brescia\n10\nCampionamento\nGli statistici si basano sulle leggi fondamentali della\nprobabilit`a e dell’inferenza statistica per giungere a\nconclusioni sui sistemi scientiﬁci studiati. L’obietti-\nvo `e generalizzare l’esperimento singolo alla classe di\ntutti gli esperimenti simili, operando un’estensione\ndal particolare al generale, detta INFERENZA IN-\nDUTTIVA.\nL’inferenza induttiva `e perci`o un processo d’azzardo:\nnon si possono fare generalizzazioni assolutamente\n\n---\n\nAstrazione sui dati\n• Il principio di separazione delle classi e di \nastrazione sui dati è \"semplice\" nell'enunciato, \nma richiede esperienza per essere assimilato \npienamente\n• Il principio è valido e va seguito sia \nprogettando top-down sia bottom-up\n• Attributi (e metodi) complicati o ingombranti \nsono sintomi di una possibile violazione del \nprincipio: riflettere (e rifare) !\n61\n\n---\n\nBasi di Dati\nL‘interprete SQL\nSQL di Access è un sottoinsieme (e, per alcuni versi, estensione) di \nSQL standard e presenta alcune differenze:\nl’operatore di Join deve essere qualificato obbligatoriamente \nprecedendolo con le parole Inner o Outer (es. Inner Join)\nquando compaiono spazi nei nomi di tabelle o attributi, i nomi \nvanno racchiusi tra coppie di parentesi quadre\nla valutazione dell’operatore Count è diversa dallo standard; se ha \nun attributo come argomento:\nl’opzione Distinct non è accettata;",
+    "answer": "Le regole di inferenza di Armstrong sono un metodo per calcolare $F^+$, che rappresenta tutte le dipendenze funzionali logicamente implicate da $F$.\n\nLe regole sono le seguenti:\n\n1.  **Riflessività:** Se $Y \\subseteq X$, allora $X \\rightarrow Y$.\n2.  **Aggiunta:** Se $X \\rightarrow Y$, allora $X Z \\rightarrow Y Z$, per qualunque $Z$.\n3.  **Transitività:** Se $X \\rightarrow Y$ e $Y \\rightarrow Z$, allora $X \\rightarrow Z$.\n\nIn queste regole, $X$, $Y$, e $Z$ sono sottoinsiemi di $U$.",
+    "latency_s": 6.88
+  },
+  {
     "id": "q02",
     "category": "in_domain_direct",
     "query": "Come funziona la tecnica write-back nella cache? Cos'e' il dirty bit?",
@@ -15,16 +36,13 @@
     "retrieved_ids": [
       "L19_Cache.pdf::0035::13d66bbf",
       "L19_Cache.pdf::0085::13d66bbf",
-      "L19_Cache.pdf::0034::a90ae938",
       "L19_Cache.pdf::0084::a90ae938",
-      "L19_Cache.pdf::0038::4eb985c7"
+      "L19_Cache.pdf::0034::a90ae938",
+      "L19_Cache.pdf::0088::4eb985c7"
     ],
     "context": "41\nSpiegazione lucidi precedenti\n(tecnica del write-back)\n• hit: \n- il dato è scritto solo nella cache (si genera inconsistenza)\ned un bit associato al blocco della cache (dirty bit) posto a 1\n• miss:\n- trasferimento del blocco da memoria a cache\n- scrittura del dato come nel caso di hit\n• Il blocco è trasferito in memoria principale solo quando deve\nessere rimpiazzato e solo se è stato effettivamente modificato\nda una scrittura (se dirty bit = 1)\n• Anche in questo caso si può usare un write buffer quando\n\n---\n\n41\nSpiegazione lucidi precedenti\n(tecnica del write-back)\n• hit: \n- il dato è scritto solo nella cache (si genera inconsistenza)\ned un bit associato al blocco della cache (dirty bit) posto a 1\n• miss:\n- trasferimento del blocco da memoria a cache\n- scrittura del dato come nel caso di hit\n• Il blocco è trasferito in memoria principale solo quando deve\nessere rimpiazzato e solo se è stato effettivamente modificato\nda una scrittura (se dirty bit = 1)\n• Anche in questo caso si può usare un write buffer quando\n\n---\n\n39\nSCRITTURA\nUsando la tecnica del write-back\nCache\nCPU\nMem. C.LE\n…\n…\n1\ndirty bit\nle scritture avviene solo\nnella cache\n\n40\nRimpiazzo blocco Usando la tecnica del write-back\nCache\nCPU\nMem. C.LE\n…\n…\ndirty bit\nse\ndirty bit ==1\navvenutascrittura\ndapartedicosa\n\n---\n\n39\nSCRITTURA\nUsando la tecnica del write-back\nCache\nCPU\nMem. C.LE\n…\n…\n1\ndirty bit\nle scritture avviene solo\nnella cache\n\n40\nRimpiazzo blocco Usando la tecnica del write-back\nCache\nCPU\nMem. C.LE\n…\n…\ndirty bit\nse\ndirty bit ==1\navvenutascrittura\ndapartedicosa\n\n---\n\n44\n• ogni volta che DMA trasferisce dati da dispositivo a memoria DRAM:\nse il blocco è presente in cache il sistema operativo \npone il bit di validità a 0 [dati incoerenti con DRAM]\n• ogni volta che DMA trasferisce dati da DRAM [blocco] a dispositivo:\n- se cache usa write-through: nessun problema (DRAM coerente)\n- con write-back: la memoria può non riflettere la cache, \nuna possibilità è lo svuotamento (flush) cache: \ni blocchi con dirty bit a 1 sono trasferiti \nin memoria DRAM",
     "answer": "",
-    "latency_s": 7.52,
-    "faithfulness": 5,
-    "answer_relevance": 5,
-    "judge_reasoning": "La risposta dell'assistente e' completamente supportata dal contesto e risponde perfettamente alla domanda."
+    "latency_s": 7.14
   },
   {
     "id": "q03",
@@ -47,10 +65,7 @@
     ],
     "context": "Approssimazione del criterio LRU\n0\n1\n1\n0\n1\n0\n1\n0\n0\n1\n1\n0\n1\n0\n1\n0\n…\nP0\nP1\nP2\nP3\nQuando si verifica un page fault si sceglie una \ndelle pagine con il valore più basso del registro\nPossibili vittime\n\nApprossimazione del criterio LRU\n• Quanti bit si useranno per tener conto della \nstoria delle pagine ?\n• La risposta è semplice … \n• … un solo bit !\n• Algoritmo dell'orologio (clock) o seconda chance\n• Ulteriore semplificazione dell'approssimazione \ndel criterio LRU\n\n---\n\nApprossimazione del criterio LRU\n• Applicare in modo esatto il criterio LRU risulta \npraticamente impossibile\n• Si dovrà approssimare in qualche modo il criterio \nLRU (che a sua volta era un'approssimazione del \ncriterio ottimo)\n• Idea: \n– associare ad ogni pagina di memoria un'informazione \naggiornata periodicamente che riflette in qualche modo \nl'ultimo accesso\n– con questa informazione distinguere pagine più o meno \nvecchie \"a gruppi\": si sceglierà la vittima dal gruppo delle \npiù vecchie\n\n---\n\nAlgoritmo dell'orologio (o seconda \nchance) a un bit\nP0\nP1\nP2\nP3\n1\nA\n1\n1\n1\nVittima!\n0\n0\n0\n0\n1\nDopo il riempimento iniziale della \nmemoria il primo page fault è \nscontato: si azzerano tutti i bit di \naccesso e la vittima corrisponde alla \npagina da cui è partita la lancetta\nLa lancetta si posiziona sulla pagina \nimmediatamente successiva alla \nvittima\nì\n\n---\n\nAlgoritmo dell'orologio (o seconda \nchance) a un bit\nP0\nP1\nP2\nP3\n1\nA\n1\n1\n1\nDopo il riempimento iniziale della \nmemoria tutte le pagine hanno il bit \ndi accesso a 1 e la lancetta si trova in \ncorrispondenza della prima pagina\nA memoria piena, quando si verifica \nun page fault la lancetta parte alla \nricerca di una vittima scandendo le \nvarie pagine:\n-\nse trova il bit a 1 lo mette a 0 e \nprocede (seconda chance)\n-\nse trova il bit a 0 si ferma e quella \nè la vittima selezionata\n\n---\n\nAlgoritmo dell'orologio o seconda \nchance (a un bit)\n• Viene detto dell'orologio perché può essere \ndescritto con una lancetta che scandisce \ncircolarmente la memoria quando bisogna \ncercare una vittima\n• Viene detto anche seconda chance perché alcune \npagine vengono \"risparmiate\" al primo passaggio \ndella lancetta\n• Ogni pagina ha associato un bit di accesso che \nviene settato a 1 ogni volta che la pagina viene \nacceduta",
     "answer": "",
-    "latency_s": 7.39,
-    "faithfulness": 5,
-    "answer_relevance": 5,
-    "judge_reasoning": "La risposta dell'assistente è completamente supportata dal contesto e risponde in modo completo e accurato alla domanda."
+    "latency_s": 7.24
   },
   {
     "id": "q04",
@@ -73,10 +88,7 @@
     ],
     "context": "Marina Zanella - Ingegneria del Software – UML: Introduzione \n10 \nNotazione e meta-modello \n \nDefinizione di UML = notazione + meta-modello \n \nNotazione = sintassi grafica del linguaggio di modellazione = insieme degli \nelementi grafici di ciascun diagramma, dove ogni elemento grafico rappresenta \nun concetto \n \nquesito: qual è il significato di ciascun concetto? \nrisposta: manca una definizione formale \n \nMeta-modello = diagramma (solitamente diagramma delle classi) che definisce i\n\n---\n\nDefinizione di UML = notazione + meta-modello  \nNotazione = sintassi grafica del linguaggio di modellazione = insieme degli elementi grafici di ciascun diagramma, \ndove ogni elemento grafico rappresenta un concetto  \n  \nQuesito: qual è il significato di ciascun concetto?  \nRisposta: manca una definizione formale  \n  \nMeta-modello (modello dei modelli) = diagramma (solitamente diagramma delle classi) che definisce i concetti del\n\n---\n\nER, DFD, casi d’uso, \ndiagrammi UML \n \n \nNotazione = sintassi del linguaggio di modellazione (aspetto grafico nel caso di linguaggi grafici; la sintassi UML è \ndescritta da un meta-modello in UML). \nNotazioni semiformali: il loro significato non è univoco, bensì viene lasciato all’interpretazione dell’utente o dello \nstrumento CASE generatore di codice (es. Together). \nLinguaggi di specifica: ulteriore classificazione\n\n---\n\nDescrivere un’applicazione o un diagramma applicativo sono due cose diverse e chi deve leggere un UML deve \nconoscere il punto di vista con il quale il diagramma è stato creato (sarebbe opportuno indicare con una nota la \nprospettiva utilizzata). \nLe prospettive non appartengono a UML, però il significato di ogni elemento di un diagramma dipende dalla \nprospettiva adottata. \nNotazione e meta-modello  \nDefinizione di UML = notazione + meta-modello\n\n---\n\nMarina Zanella - Ingegneria del Software – Requisiti \n19 \nLinguaggi di specifica \n \nNotazione = \nsintassi del linguaggio di modellazione (aspetto grafico nel caso di linguaggi \ngrafici; la sintassi UML è descritta da un meta-modello in UML) \n \nNotazioni semiformali: \nil loro significato non è univoco, bensì viene lasciato all’interpretazione \ndell’utente o dello strumento CASE generatore di codice (es. Together)",
     "answer": "",
-    "latency_s": 7.36,
-    "faithfulness": 5,
-    "answer_relevance": 5,
-    "judge_reasoning": "La risposta dell'assistente corrisponde perfettamente alla definizione di notazione e meta-modello fornita nel contesto."
+    "latency_s": 7.2
   },
   {
     "id": "q05",
@@ -91,18 +103,15 @@
     "status": "answered",
     "min_distance": 0.27308404445648193,
     "retrieved_ids": [
-      "L12_CPUmulticiclo.pdf::0140::6fe5683f",
       "L12_CPUmulticiclo.pdf::0061::6fe5683f",
+      "L12_CPUmulticiclo.pdf::0140::6fe5683f",
       "L16_Esercizi_Pipeline_Base.pdf::0003::b298d267",
       "L16_Esercizi_Pipeline_Base.pdf::0019::b298d267",
       "L12_CPUmulticiclo.pdf::0142::29b07225"
     ],
     "context": "41\nPRESTAZIONI DEL PROCESSORE MULTICICLO\nTCPU = I1*CPI1*Tclock + I2*CPI2*Tclock + I3*CPI3*Tclock + …\n= (I1*CPI1 + I2*CPI2 + I3*CPI3 + …) * Tclock\n= #istruzioni * (f1*CPI1 + f2*CPI2 + f3*CPI3 + …) * Tclock\nCPI\nCPI: clock Cycles Per Instruction\nnumero medio di cicli di clock per istruzione: \nmedia del numero di cicli di clock che le diverse \nistruzioni di un programma richiedono per essere completate\nTCPU =  #istruzioni * CPI * Tclock\n=  #istruzioni * CPI \nfclock\nNB:    Tmedio-istruzione = CPI*Tclock\n\n---\n\n41\nPRESTAZIONI DEL PROCESSORE MULTICICLO\nTCPU = I1*CPI1*Tclock + I2*CPI2*Tclock + I3*CPI3*Tclock + …\n= (I1*CPI1 + I2*CPI2 + I3*CPI3 + …) * Tclock\n= #istruzioni * (f1*CPI1 + f2*CPI2 + f3*CPI3 + …) * Tclock\nCPI\nCPI: clock Cycles Per Instruction\nnumero medio di cicli di clock per istruzione: \nmedia del numero di cicli di clock che le diverse \nistruzioni di un programma richiedono per essere completate\nTCPU =  #istruzioni * CPI * Tclock\n=  #istruzioni * CPI \nfclock\nNB:    Tmedio-istruzione = CPI*Tclock\n\n---\n\n3\n• Numero di cicli per ciascuna classe di istruzioni \nLoad = 5\nStore = 4\nFormato-R = 4\nSalti cond. = 3\nSalti incond. = 3\n• CPI = 0,22´5 + 0,11´4 + 0,49´4 + 0,16´3 + 0,02´3 = 4,04\n• Tempo medio per istruzione = CPI ´ Tclock\n= 4,04 ´ 4 ns = 16,16 ns\nSoluzione\nTclock = 4 ns \n(sia nel caso multiciclo sia nel caso di pipeline:\ncorrisponde al tempo di esecuzione dell’unità funzionale più lenta)\nTempo medio di CPU nel caso di controllo multi-ciclo\n0\n\n---\n\n3\n• Numero di cicli per ciascuna classe di istruzioni \nLoad = 5\nStore = 4\nFormato-R = 4\nSalti cond. = 3\nSalti incond. = 3\n• CPI = 0,22´5 + 0,11´4 + 0,49´4 + 0,16´3 + 0,02´3 = 4,04\n• Tempo medio per istruzione = CPI ´ Tclock\n= 4,04 ´ 4 ns = 16,16 ns\nSoluzione\nTclock = 4 ns \n(sia nel caso multiciclo sia nel caso di pipeline:\ncorrisponde al tempo di esecuzione dell’unità funzionale più lenta)\nTempo medio di CPU nel caso di controllo multi-ciclo\n0\n\n---\n\n42\nå\n=\nn\ni\nf\n1\ni\ni\n)\nCPI\n \n(\nCPI  =\ndove fi è la frequenza delle istruzioni della classe i e CPIi è il numero di \ncicli per le istruzioni della classe i, mentre n è il numero delle classi \nEspressione dei CPI\n• CPI può rappresentare il numero medio di cicli di clock delle\nistruzioni riferito a un programma, ma più in generale al “carico\ndi lavoro” previsto (instruction mix)\ni\ni\n1\n(CPI\n)\nn\ni\nI\nI\n=å\n(Ii: numero di istruzioni i eseguite)\n=",
     "answer": "",
-    "latency_s": 7.75,
-    "faithfulness": 5,
-    "answer_relevance": 5,
-    "judge_reasoning": "La risposta dell'assistente è supportata dal contesto e risponde completamente alla domanda."
+    "latency_s": 7.51
   },
   {
     "id": "q06",
@@ -124,11 +133,24 @@
       "7++)SistemiOperativiRealTime.pdf::0065::811720a3"
     ],
     "context": "Compiti del mkernel\n• Non esiste una lista ufficiale dei compiti del \nmkernel: implementazioni diverse possono \nattribuire compiti diversi\n• Ci sono comunque alcuni compiti basilari che \nsono propri del mkernel in ogni implementazione\n– Astrazione dell'hardware\n– Gestione delle interruzioni (almeno la prima parte)\n– Gestione dell'alternanza tra processi utente\n– Comunicazione tra processi (IPC: InterProcess\nCommunication)\n\n---\n\nL'approccio a microkernel (mkernel)\n• Combina le due idee illustrate nei lucidi \nprecedenti\n• Il SO è composto da uno strato base di \nfunzionalità essenziali (tra le quali la \ncomunicazione) + un insieme di componenti \ndefiniti secondo il partizionamento verticale\n• Solo lo strato base, molto piccolo, gira in modo \nK (per questo è detto microkernel) mentre gli \naltri componenti del SO girano in modo U\n\n---\n\nVantaggi del mkernel\n• Il meccanismo di interazione tra applicazioni e \ncomponenti del SO è costituito dall'invio di \ncomunicazioni di richiesta e relativa risposta \nveicolate dal mkernel\n• Risulta naturale un'estensione di questo \napproccio in un contesto distribuito nel quale \nle richieste e risposte sono veicolate da una \nrete anziché essere locali al mkernel\n\n---\n\nDove si usa il mkernel ?\n• L'uso principale dell'architettura mkernel si \nriscontra nei sistemi operativi real-time\n• Spesso questi SO sono anche SO embedded e \nquindi pensati per HW con risorse limitate\n• Ma anche in questo caso il problema della \nlentezza sembrerebbe dover pesare molto\n• Potremo risolvere questa apparente \ncontraddizione solo più avanti nel corso\ngi\n\n---\n\nPatch del kernel e \"pseudo mkernel\"\n• E' possibile trasformare un SO convenzionale in \nuno real-time con modifiche localizzate del kernel\n(dette in generale patch)\n• In particolare una strategia spesso utilizzata è \ncreare una sorta di mkernel che opera al di sotto \ndel SO convenzionale\n• Questo \"pseudo mkernel\" non ha tutte le capacità \ndi un mkernel completo (p.e. il boot è gestito dal \nSO tradizionale) ma è in grado di gestire \nopportunamente dei task real-time \ntoppapenna",
-    "answer": "Il microkernel (mkernel) svolge diverse funzioni in un sistema operativo a microkernel:\n\n**Compiti basilari:**\n*   Astrazione dell'hardware.\n*   Gestione delle interruzioni (almeno la",
-    "latency_s": 7.43,
-    "faithfulness": 4,
-    "answer_relevance": 2,
-    "judge_reasoning": "La risposta dell'assistente fornisce alcune informazioni basilari sul microkernel, ma non risponde direttamente alla domanda e non copre appieno il contesto fornito."
+    "answer": "",
+    "latency_s": 7.19
+  },
+  {
+    "id": "q07",
+    "category": "in_domain_direct",
+    "query": "Come funziona il predicato append/3 in Prolog?",
+    "gt_answer": "append([], X, X). append([H|T], Y, [H|Z]) :- append(T, Y, Z). Concatena due liste decomponendo ricorsivamente la prima testa per testa. Es: append([inglese, russo], [spagnolo], L) => L = [inglese, russo, spagnolo].",
+    "expected_ids": [
+      "lp-esercizi-prolog.pdf::0072::06444099",
+      "9.lp-esercizi-prolog.pdf::0072::06444099"
+    ],
+    "status": "refused_ood",
+    "min_distance": 0.41807252168655396,
+    "retrieved_ids": [],
+    "context": "",
+    "answer": "La domanda non rientra nel materiale del corso (gate OOD).",
+    "latency_s": 0.0
   },
   {
     "id": "q08",
@@ -151,10 +173,7 @@
     ],
     "context": "Transazione ben formata\nE’ una proprietà che si manifesta a run time:\n•\nUna transazione comincia con “begin transaction” e termina con “end \ntransaction”\n•\nSolo uno dei due comandi commit work / rollback work viene eseguito\n•\nLe operazioni di aggiornamento fisico dei dati sono eseguite \neffettivamente solo quando una di queste due operazioni è eseguita\n12\n\n---\n\nTransazioni - proprieta’\n•\nIsolamento: l’esecuzione di una t. deve essere indipendente \ndalla contemporanea esecuzione di altre t. Si richiede che \nl’esecuzione concorrente di un insieme di t. sia analogo al \nrisultato che le stesse t. otterrebbero nel caso in cui ciascuna di \nesse fosse eseguita da sola. Questo per evitare che il rollback di \nuna t. causi il rollback di altre t. (effetto domino). Questo \npotrebbe accadere se una t. leggesse i dati modificati da\n\n---\n\nIl journal (o log) delle transazioni\n• Per garantire le proprietà delle transazioni (in \nparticolare l'atomicità) è necessario tener traccia \ndello svolgimento delle operazioni che le \ncompongono\n• La struttura dati dedicata a questo scopo viene detta \njournal (o log) delle transazioni\n• Dal contenuto del journal (p.e. dopo un crash) è \npossibile determinare se c'erano transazioni in corso \ne a che punto erano, e quindi completarle o \nannullarle facendo \"marcia indietro\"(roll back)\nunastruttura dati\n\n---\n\n– Commit work (conferma la transazione)\n– Rollback work (uccisione/abort della transazione)\n10\n\n---\n\nregole di esecuzione:\na)\nogni transazione non può leggere o scrivere un dato già scritto da un transazione\ncon timestamp superiore (cioè più recente)\nb)\nogni transazione non può scrivere un dato già letto da un transazione con \ntimestamp superiore\nc)\nogni violazione delle regole a) o b) da parte di una transazione comporta il suo\nabort imposto dal controllore della concorrenza. La transazione va quindi\nrieseguita daccapo (con un nuovo timestamp).\n(RIPRENDEREMO QUESTE IDEE NELLE SLIDE SU TRANSAZIONI",
     "answer": "",
-    "latency_s": 7.34,
-    "faithfulness": 5,
-    "answer_relevance": 5,
-    "judge_reasoning": "La risposta dell'assistente e' supportata dal contesto e risponde completamente alla domanda."
+    "latency_s": 7.28
   },
   {
     "id": "q09",
@@ -171,18 +190,15 @@
     "status": "answered",
     "min_distance": 0.3465094566345215,
     "retrieved_ids": [
-      "L18_Esercizi_Pipeline_Critic.pdf::0086::78c935f1",
       "L18_Esercizi_Pipeline_Critic.pdf::0032::78c935f1",
-      "L17_Pipeline_Criticit.pdf::0111::c95e8fc4",
+      "L18_Esercizi_Pipeline_Critic.pdf::0086::78c935f1",
       "L17_Pipeline_Criticit.pdf::0001::c95e8fc4",
-      "L18_Esercizi_Pipeline_Critic.pdf::0055::82063313"
+      "L17_Pipeline_Criticit.pdf::0111::c95e8fc4",
+      "L18_Esercizi_Pipeline_Critic.pdf::0001::82063313"
     ],
     "context": "28\nEsercizio – Criticità sui salti, stallo e propagazione\nSi consideri il seguente frammento di codice MIPS:  \nlw      $t1, 20($s3)\nadd    $t0, $s1, $s2\nbeq    $t0, $t1, Dest1\nlw      $t1, 30($s3)\nbeq    $t0, $t1, Dest2\nadd    $t0, $t1, $t1\nSi consideri l’implementazione con pipeline a 5 stadi (F: Fetch, D: Decode, E: \nExecute, M: Mem, W: Write-Back) in cui le criticità sui salti condizionati sono\nrisolte mediante stallo. Per le criticità sui dati sono disponibili unità di\n\n---\n\n28\nEsercizio – Criticità sui salti, stallo e propagazione\nSi consideri il seguente frammento di codice MIPS:  \nlw      $t1, 20($s3)\nadd    $t0, $s1, $s2\nbeq    $t0, $t1, Dest1\nlw      $t1, 30($s3)\nbeq    $t0, $t1, Dest2\nadd    $t0, $t1, $t1\nSi consideri l’implementazione con pipeline a 5 stadi (F: Fetch, D: Decode, E: \nExecute, M: Mem, W: Write-Back) in cui le criticità sui salti condizionati sono\nrisolte mediante stallo. Per le criticità sui dati sono disponibili unità di\n\n---\n\n2\nPipeline: i problemi\n• Idealmente, il throughput è di una istruzione per ciclo di clock!\n• Purtroppo, in realtà esistono diverse problematiche: \n- Criticità strutturali: HW non può eseguire una certa combinazione di istruzioni \n[es: una stessa risorsa è contesa da parte di più istruzioni]\n- Criticità sui dati: un’istruzione dipende dal risultato di un’istruzione\nprecedente che si trova ancora nella pipeline.\nE’ necessario attendere che il risultato sia pronto.\n\n---\n\n2\nPipeline: i problemi\n• Idealmente, il throughput è di una istruzione per ciclo di clock!\n• Purtroppo, in realtà esistono diverse problematiche: \n- Criticità strutturali: HW non può eseguire una certa combinazione di istruzioni \n[es: una stessa risorsa è contesa da parte di più istruzioni]\n- Criticità sui dati: un’istruzione dipende dal risultato di un’istruzione\nprecedente che si trova ancora nella pipeline.\nE’ necessario attendere che il risultato sia pronto.\n\n---\n\n3\n•\nSi consideri un processore dotato di pipeline (5 stadi)     \nche disponga di una sola memoria cache per i dati e per le istruzioni:\nEsercizio – una sola memoria cache per dati e istruzioni\n1) Si proponga una soluzione al problema basata sullo stallo della\npipeline, descrivendo mediante diagramma temporale ciò che\navviene in caso di conflitto sulla memoria.\n2) Si supponga che il 40% delle istruzioni eseguite facciano \nriferimento ai dati e che non esistano altri tipi di stalli:",
     "answer": "",
-    "latency_s": 7.49,
-    "faithfulness": 1,
-    "answer_relevance": 1,
-    "judge_reasoning": "La risposta dell'assistente non è stata fornita, quindi non è possibile valutarla."
+    "latency_s": 7.43
   },
   {
     "id": "q10",
@@ -206,11 +222,8 @@
       "CALCOL[21-06b]30.06.21.pdf::0019::8ffd4d6b"
     ],
     "context": "Con write through\nla\nsovrascrizione\nè fatta contempare\nsia\nin cache che\nmemoria\ncentrale mentre\nnel\nwrite back solo\nin cache\nIl write through è più\ncostosa\nin\ntermini\ndi tempo che può essere tamponato\ncon\nun\nmorite buffer\n\n---\n\n5. \nCon riferimento alla gestione delle operazioni di scrittura nella memoria cache, illustrare la \ntecnica del “write through”, specificando in particolare la differenza rispetto al “write back”.   \n \n \n \n \n \n \n \n \n \n  \n \n \n  [2] \nSi consideri un’operazione di trasferimento DMA dalla memoria centrale ad una periferica. \nSi spieghi se e quali differenze comporta sull’esecuzione di questa operazione la scelta del \n“write through” rispetto al “write back”.  \n \n \n \n \n \n \n  [2]\n\n---\n\n5. \nCon riferimento alla gestione delle operazioni di scrittura nella memoria cache, illustrare la \ntecnica del “write through”, specificando in particolare la differenza rispetto al “write back”.   \n \n \n \n \n \n \n \n \n \n  \n \n \n  [2] \nSi consideri un’operazione di trasferimento DMA dalla memoria centrale ad una periferica. \nSi spieghi se e quali differenze comporta sull’esecuzione di questa operazione la scelta del \n“write through” rispetto al “write back”.  \n \n \n \n \n \n \n  [2] \n \nvedilucidi\nfired\nmen\n\n---\n\n5. \nCon riferimento alla gestione delle operazioni di scrittura nella memoria cache, illustrare la \ntecnica del “write through”, specificando in particolare la differenza rispetto al “write back”.   \n \n \n \n \n \n \n \n \n \n  \n \n \n  [2] \nSi consideri un’operazione di trasferimento DMA dalla memoria centrale ad una periferica. \nSi spieghi se e quali differenze comporta sull’esecuzione di questa operazione la scelta del \n“write through” rispetto al “write back”.  \n \n \n \n \n \n \n  [2] \n \nvedilucidi\n\n---\n\nCOGNOME: \nNOME: \nMATR: \n \n9 \n6. \nCon riferimento alla gestione delle operazioni di scrittura nella memoria cache, illustrare la \ntecnica del “write through”, specificando in particolare la differenza rispetto al “write back”.   \n \n \n \n \n \n \n \n \n \n  \n \n \n  [2] \nSi consideri un’operazione di trasferimento DMA dalla memoria centrale ad una periferica. Si \nspieghi nel modo più chiaro possibile se e quali differenze comporta sull’esecuzione di questa",
-    "answer": "Sulla base del contesto fornito, il confronto tra le due tecniche è il seguente:\n\n**Write Through:**\n*   **Meccanismo:** La sovrascrizione è fatta contempare sia in cache che memoria centrale.\n*   **Performance/Costo:** È più costosa in termini di tempo, ma questo può essere tamponato con un *morite buffer*.\n\n",
-    "latency_s": 7.55,
-    "faithfulness": 4,
-    "answer_relevance": 3,
-    "judge_reasoning": "La risposta è parzialmente supportata dal contesto e risponde alla domanda, ma manca di dettagli e di una completa comparazione con il write-back."
+    "answer": "Basandosi sul contesto fornito, ecco il confronto tra le due tecniche:\n\n**Write Through:**\n*   **Meccanismo",
+    "latency_s": 7.29
   },
   {
     "id": "q11",
@@ -235,10 +248,7 @@
     ],
     "context": "Paginazione a più livelli\nEsempio\na\n3\nlivelli\n\nPaginazione a più livelli e prestazioni\n• Più aumentano i livelli più aumenta il numero di \naccessi in RAM necessari per fare la traduzione: \nil ruolo del TLB diventa ancora più cruciale\n• Se nLIV è il numero di livelli, il tempo medio per \nun accesso \"utile\" alla memoria sarà dato da:\nhr(tTLB + tmem) + (1 – hr)(tTLB + (nLIV + 1)tmem)\n\n---\n\nBastano due livelli ?\n• Se lo spazio di indirizzamento virtuale è molto \ngrande si può ripetere lo stesso procedimento \npaginando a sua volta la tabella esterna\n• Ci sono esempi concreti di paginazione a 3 e 4 \nlivelli\n\nPaginazione a più livelli\nEsempio\na\n3\nlivelli\n\n---\n\nI costi della paginazione\n• Anche se risolve i problemi dell'allocazione \ncontigua la paginazione non è esente da \nsvantaggi\n• Il meccanismo di traduzione è più complesso\n• E' necessaria la costruzione, memorizzazione e \ngestione di strutture dati di supporto: le tabelle \ndelle pagine che devono essere collocate in \nRAM a loro volta\n\n---\n\nPaginazione a due livelli\n• La tabella delle pagine è a sua volta paginata\n• Le parti in cui è divisa (ciascuna della \ndimensione di una pagina) potranno essere \ncollocate a piacimento in memoria centrale o \nsu disco\n• Ci sarà una tabella esterna delle pagine che \ncontiene le informazioni sulle varie \"pagine \ndella tabella delle pagine\"\n\n---\n\nPaginazione a due livelli: traduzione\nIl numero di pagina è a sua \nvolta diviso in due parti\nLa parte più significativa fa \nda indice nella tabella \nesterna delle pagine e \nindica in quale pagina della \ntabella delle pagine si trova \nl'informazione \ncorrispondente\nDalla tabella esterna si \nricava la posizione della \npagina della tabella delle \npagine cui accedere\nLa seconda parte del numero di \npagina fa da indice nella pagina \ndella tabella delle pagine\nDalla tabella si ricava la",
     "answer": "",
-    "latency_s": 7.52,
-    "faithfulness": 5,
-    "answer_relevance": 5,
-    "judge_reasoning": "La risposta dell'assistente è supportata dal contesto e risponde completamente alla domanda."
+    "latency_s": 7.15
   },
   {
     "id": "q12",
@@ -263,10 +273,7 @@
     ],
     "context": "Marina Zanella - Ingegneria del Software – UML: Diagrammi delle classi \n36 \nConcetti avanzati (cont.) \n \nElementi \nSintassi \nSemantica \nClassificazione \ndinamica \nCome la classificazione multipla \nma l’insieme di generalizzazione \nè accompagnato dalla parola \nchiave «dynamic» \n Consente agli oggetti di \ncambiare tipo all’interno di \nuna struttura di sottotipi \n utile a livello di \nmodellazione concettuale \n \n \nSuggerimento: usare sempre una classificazione singola e statica (che\n\n---\n\nClassificazione multipla ≠ ereditarietà multipla. \nClassificazione multipla (subtyping) \n \nClassificazione dinamica \n \nSuggerimento: usare sempre una classificazione singola e statica (che corrisponde all’uso di un singolo anonimo \ninsieme di generalizzazione). \nLa classificazione multipla è preferibile a usare solo a livello concettuale e non a livello sw. \nClassificazione \n \nSi tratta di un diagramma delle classi in cui viene classificato in maniera multipla il concetto di persona.\n\n---\n\nMarina Zanella - Ingegneria del Software – UML: Diagrammi delle classi \n34 \nClassificazione \n \nClassificazione = relazione tra un oggetto e il suo tipo; può essere \n \n singola: un oggetto appartiene a un solo tipo \n multipla: un oggetto può essere descritto da più tipi \n \nClassificazione multipla  ereditarietà multipla \n \nJava supporta solo\nl'ereditarietàsingole\n\n---\n\nMarina Zanella - Ingegneria del Software – UML: Diagrammi delle classi \n37 \nClassificazione \n \n \nsesso \n{complete} \nFemmina \nMaschio \nPersona \nProgrammatore \nResponsabile \ndi progetto \nCommerciale \nimpiego \n«dynamic» \nDipendente \nCollaboratore \ncontratto \n«dynamic» \nClassificazione \ndinamica \nInsieme di \ngeneralizzazione \n(discriminante) \nVincolo \nOssOgni criterio deve suddividere\nin\nclassi disgiunte\nFidi\nclassificazione\nIl\nlipoppa\nforza in una di queste\n2 sottocategorie\nnon c'è il discriminante\n\n---\n\nMarina Zanella - Ingegneria del Software – UML: Diagrammi delle classi \n35 \nConcetti avanzati (cont.) \n \nElementi \nSintassi \nSemantica \nClassificazione \nmultipla \n(subtyping) \n Come la generalizzazione, ma etichettata \ncon il nome di un insieme di generalizzazione \n(discriminante), che indica la base della \nclassificazione; \n il discriminante è accompagnato dal vincolo \n{complete} se ogni istanza della superclasse \ndeve essere anche un’istanza di uno dei \nsottotipi del gruppo così contraddistinto;",
     "answer": "",
-    "latency_s": 7.65,
-    "faithfulness": 5,
-    "answer_relevance": 5,
-    "judge_reasoning": "La risposta dell'assistente è completamente supportata dal contesto e risponde in modo completo e accurato alla domanda."
+    "latency_s": 7.31
   },
   {
     "id": "q13",
@@ -291,10 +298,7 @@
     ],
     "context": "Esercizio r.￿\nUn generico problema di Programmazione Lineare Intera con tutte variabili\n≥￿viene risolto tramite un algoritmo di Branch&Bound (B&B) in cui:\n• l’upper bound per ogni nodo dell’albero di ricerca viene determinato\nrisolvendo in maniera ottima il rilassamento continuo del relativo\nsottoproblema;\n• un lower bound, corrispondente ad una soluzione ammissibile per il\nproblema, viene determinato per ogni nodo dell’albero di ricerca da\nun metodo esterno (ad esempio un’euristica).\n\n---\n\nBranch-and-Bound (metodo del simplesso)\nRisolvere il seguente problema di Programmazione Lineare Intera\ntramite l’algoritmo di Branch-and-Bound:\n(P￿)\nmx\nz =\n￿\n￿\nx￿+ x￿\n￿x￿\n−\n￿x￿\n≥￿\n￿x￿\n+\n￿x￿\n￿￿\nx￿\n￿\nx￿, x￿≥￿,\ninteri.\n￿￿/￿￿\nRisolviamo un problema\nanche qua è\nnecessario\nfare ricorso\nal\nrimplesso dual\nla sohu.name delrilassamento\ncontinuopotrebbeGolennialment\ndareproblemiad una degenerano\nachente\n\n---\n\nEsercizio r.￿￿: analisi di Branch and Bound\nUn generico problema di Programmazione Lineare Intera con variabili ≥￿\nviene risolto tramite un algoritmo di Branch&Bound (B&B) in cui:\n• il lower bound per ogni nodo dell’albero di ricerca viene determinato\nrisolvendo in maniera ottima il rilassamento continuo del relativo\nsottoproblema;\n• un upper bound, corrispondente ad una soluzione ammissibile per il\nproblema, viene determinato per ogni nodo dell’albero di ricerca da\n\n---\n\n[a)(0,5,10,0,19,0),f.o=65; b)(6,0,1,12,0,0); c) Vero, perch´e...]\nEsercizio 3: Sia dato il seguente problema di Programmazione Lineare Intera\nmax\n2x1 + 3x2\n3x1 + 5x2 25\n−x1 + x2 0\nx1, x2 ≥0 intere\na. Trovare il valore ottimo del problema tramite l’algoritmo di Branch & Bound, adottando una tecnica di\nesplorazione in ampiezza e risolvendo ogni sottoproblema per via graﬁca.\nb. Riportare l’albero di ricerca ottenuto, evidenziando l’ordine di esplorazione dei nodi, i branching e↵ettuati\n\n---\n\nEsercizio ￿(dal tema d’esame di giugno ￿￿￿￿)\nDato il seguente Problema di Programmazione Lineare Intera:\nmin\n￿x￿+ ￿x￿+ x￿−￿\nx￿+ x￿−x￿≥￿\n￿x￿+ ￿x￿+ ￿x￿≥￿￿\nx￿≥￿\nx￿, x￿≥￿, intere\nx￿2 {￿, ￿}\na. si determini la soluzione ottima del problema con un algoritmo di Branch and\nBound, adottando una strategia di ricerca Depth First, e￿ettuando il\nbranching sulla variabile con parte frazionaria maggiore e risolvendo i\nsottoproblemi per via gra￿ca;",
     "answer": "",
-    "latency_s": 7.8,
-    "faithfulness": 5,
-    "answer_relevance": 5,
-    "judge_reasoning": "La risposta dell'assistente è supportata dal contesto e risponde completamente alla domanda, fornendo una descrizione accurata del metodo Branch and Bound per problemi di programmazione intera."
+    "latency_s": 7.55
   },
   {
     "id": "q14",
@@ -308,17 +312,14 @@
     "min_distance": 0.38353395462036133,
     "retrieved_ids": [
       "6.lp-logico.pdf::0039::d03dde6c",
-      "6.lp-logico.pdf::0048::87988021",
       "6.lp-logico.pdf::0045::701d6e08",
       "6.lp-logico.pdf::0044::94e57cc2",
-      "9.lp-esercizi-prolog.pdf::0040::d534e4e2"
+      "6.lp-logico.pdf::0087::f39141f4",
+      "9.lp-esercizi-prolog.pdf::0037::d534e4e2"
     ],
-    "context": "Cut\nPossibile alterare il meccanismo di backtracking mediante cut “!”\nCut: inibizione del ri-soddisfacimento di certi goal nel backtracking\nUtile per rendere il programma più efficiente (quando si sa a priori che il \nbacktracking non contribuisce alla soluzione)\nEssenziale (in certi casi) per l’efficacia del programma\n! = predicato senza argomenti: \n1. Ha successo immediatamente\n2. Non può essere ri-soddisfatto\n3. Congelamento delle scelte fatte dal momento della chiamata del goal genitore\n\n---\n\nburiana\nqua si dimostrache il cut non è sempre\nnecessario Prologè completoanche senza\nil\nsuo\nutilitario\n\n---\n\nX = beta ;\nX = gamma.\nr(X) :- a(X), b(X).\nr(X) :- c(X).\nbacktracking\nlogicamentecomprensibilevedendo il\nÈ\nn\npetomani\ncome pezzodi un pontechecrolla e non\nperconfermarealla attraversa\necontrolla\n64\nma dopo non puòpiùtornare\nindietroda e4\nconfermasoloalla\n\n---\n\nCut (iii)\nPrima di “!”: backtracking fra a, b, c.\nDopo “!”: backtracking fra d, e, f.\nRitorno prima di “!”: fallimento di tutta la congiunzione di goal\nLinguaggi di Programmazione                                                                                                     6. Programmazione Logica\n21\nr :- a, b, c, !, d, e, f.\na(alfa).\na(beta).\nb(alfa).\nb(beta).\nc(gamma).\n?- r(X).\nX = alfa.\nr(X) :- a(X), !, b(X).\nr(X) :- c(X).\n?- r(X).\nX = alfa ;\nX = beta ;\nX = gamma.\nr(X) :- a(X), b(X).\n\n---\n\nEsercizio 9\nÈ data una base di fatti Prolog relativa alla specifica di un grafo connesso,  aciclico e diretto, come nel \nseguente esempio:\n \nOgni nodo è rappresentato dal suo identificatore e dalla lista di nodi successivi. Il grafo stabilisce un \nordinamento temporale parziale tra eventi. Ad esempio, l’evento 0 accade prima di ogni altro evento. Gli \neventi 1 e 2 accadono dopo l’evento 0. L’evento 3 accade dopo gli eventi 1 e 2. L’evento 1 accade prima",
+    "context": "Cut\nPossibile alterare il meccanismo di backtracking mediante cut “!”\nCut: inibizione del ri-soddisfacimento di certi goal nel backtracking\nUtile per rendere il programma più efficiente (quando si sa a priori che il \nbacktracking non contribuisce alla soluzione)\nEssenziale (in certi casi) per l’efficacia del programma\n! = predicato senza argomenti: \n1. Ha successo immediatamente\n2. Non può essere ri-soddisfatto\n3. Congelamento delle scelte fatte dal momento della chiamata del goal genitore\n\n---\n\nX = beta ;\nX = gamma.\nr(X) :- a(X), b(X).\nr(X) :- c(X).\nbacktracking\nlogicamentecomprensibilevedendo il\nÈ\nn\npetomani\ncome pezzodi un pontechecrolla e non\nperconfermarealla attraversa\necontrolla\n64\nma dopo non puòpiùtornare\nindietroda e4\nconfermasoloalla\n\n---\n\nCut (iii)\nPrima di “!”: backtracking fra a, b, c.\nDopo “!”: backtracking fra d, e, f.\nRitorno prima di “!”: fallimento di tutta la congiunzione di goal\nLinguaggi di Programmazione                                                                                                     6. Programmazione Logica\n21\nr :- a, b, c, !, d, e, f.\na(alfa).\na(beta).\nb(alfa).\nb(beta).\nc(gamma).\n?- r(X).\nX = alfa.\nr(X) :- a(X), !, b(X).\nr(X) :- c(X).\n?- r(X).\nX = alfa ;\nX = beta ;\nX = gamma.\nr(X) :- a(X), b(X).\n\n---\n\nMIN\nper usare\nl'interfacciagraficadi Prologguitracer\n5 19 10\nci permette di\nswipe\nseguirepassoperpasso\nlosvolgimentodaparte\ndi Prolog\nquitracer\nthe graphical front end will be used for subsequenttracing\ntrue\nmein\na carico gliesempidelle lezioni\ntrue\n7 trace\nsi ha\nun\ntracciamento grafico\ntrace\nArne\nesempio\ntrace\ncomunical\nx\nmaria\nelencochiamata\nlezioni\nvariabilevalore\n\n---\n\nEsercizio 9\nÈ data una base di fatti Prolog relativa alla specifica di un grafo connesso,  aciclico e diretto, come nel \nseguente esempio:\n \nOgni nodo è rappresentato dal suo identificatore e dalla lista di nodi successivi. Il grafo stabilisce un \nordinamento temporale parziale tra eventi. Ad esempio, l’evento 0 accade prima di ogni altro evento. Gli \neventi 1 e 2 accadono dopo l’evento 0. L’evento 3 accade dopo gli eventi 1 e 2. L’evento 1 accade prima",
     "answer": "",
-    "latency_s": 7.43,
-    "faithfulness": 5,
-    "answer_relevance": 5,
-    "judge_reasoning": "La risposta dell'assistente e' supportata dal contesto e risponde completamente alla domanda."
+    "latency_s": 7.33
   },
   {
     "id": "q15",
@@ -342,10 +343,72 @@
     ],
     "context": "NORM-31\nBCNF e terza forma normale\n•\nLa terza forma normale è meno restrittiva della forma normale di \nBoyce e Codd \n•\nHa il vantaggio però di essere sempre “raggiungibile”:\n– per ogni schema NON in 3NF esiste una decomposizione \nequivalente, ovvero senza perdita e con conservazione delle \ndipendenze, in 3NF\n•\nSvantaggi: una relazione 3NF, e non BCNF, contiene qualche \nforma di ridondanza. \nES., in ogni tupla in cui appare un dirigente viene ripetuta la \nsede di appartenenza\n\n---\n\nNORM-15\nForma normale di Boyce e Codd \n(BCNF)\n• Una relazione r è in forma normale di Boyce e Codd \nse, per ogni dipendenza funzionale (non banale) \nX Y definita su di essa, X contiene una chiave K di\nr\n\n---\n\nNORM-34\nAnalisi dell’entità\n– L’entità viola la BCNF e la 3NF a causa della \ndipendenza:\nPartitaIVA NomeFornitore Indirizzo\n– Possiamo decomporre sulla base di questa \ndipendenza\n\nNORM-35\nIndirizzo\nPartita\nIVA\nNome\nfornitore\nNome\nprodotto\nPrezzo\nCodice\nFornitura\nProdotto\nFornitore\n(1,1)\n(0,N)\nSchema normalizzato:\n\n---\n\nNORM-16\nCosa possiamo fare se una relazione \nnon soddisfa la BCNF?\n•\nLa sostituiamo con altre relazioni che soddisfano la BCNF\nCome?\n•\nDecomponendo sulla base delle dipendenze funzionali, al \nfine di separare i concetti.\n•\nLa relazione originale viene quindi sostituita da relazioni \npiù piccole (con meno colonne), una per ogni concetto, \nottenute tramite proiezioni sugli attributi delle dip. \nfunzionali.\n\n---\n\nNORM-29\nTerza forma normale (3NF)\n• Una relazione r è in terza forma normale se, per \nogni FD (non banale) X Y definita su di essa, è \nverificata almeno una delle seguenti condizioni:\n– X contiene una chiave K di r (è superchiave)\n– ogni attributo in Y è contenuto in almeno una \nchiave di r",
     "answer": "",
-    "latency_s": 7.42,
-    "faithfulness": 5,
-    "answer_relevance": 5,
-    "judge_reasoning": "La risposta dell'assistente è supportata dal contesto e risponde completamente alla domanda, coprendo le forme normali 3NF e BCNF e il ruolo delle dipendenze funzionali."
+    "latency_s": 7.11
+  },
+  {
+    "id": "q16",
+    "category": "out_of_domain",
+    "query": "Chi e' il presidente degli Stati Uniti nel 2025?",
+    "gt_answer": null,
+    "expected_ids": [],
+    "status": "refused_ood",
+    "min_distance": 0.5860903263092041,
+    "retrieved_ids": [],
+    "context": "",
+    "answer": "La domanda non rientra nel materiale del corso (gate OOD).",
+    "latency_s": 0.0
+  },
+  {
+    "id": "q17",
+    "category": "out_of_domain",
+    "query": "Qual e' la ricetta tradizionale del tiramisu'?",
+    "gt_answer": null,
+    "expected_ids": [],
+    "status": "refused_ood",
+    "min_distance": 0.55016028881073,
+    "retrieved_ids": [],
+    "context": "",
+    "answer": "La domanda non rientra nel materiale del corso (gate OOD).",
+    "latency_s": 0.0
+  },
+  {
+    "id": "q18",
+    "category": "out_of_domain",
+    "query": "Qual e' la distanza in km tra Roma e Milano?",
+    "gt_answer": null,
+    "expected_ids": [],
+    "status": "refused_ood",
+    "min_distance": 0.5080675482749939,
+    "retrieved_ids": [],
+    "context": "",
+    "answer": "La domanda non rientra nel materiale del corso (gate OOD).",
+    "latency_s": 0.0
+  },
+  {
+    "id": "q19",
+    "category": "out_of_domain",
+    "query": "Chi ha vinto il Tour de France nel 2023?",
+    "gt_answer": null,
+    "expected_ids": [],
+    "status": "refused_ood",
+    "min_distance": 0.5705744028091431,
+    "retrieved_ids": [],
+    "context": "",
+    "answer": "La domanda non rientra nel materiale del corso (gate OOD).",
+    "latency_s": 0.0
+  },
+  {
+    "id": "q20",
+    "category": "out_of_domain",
+    "query": "Come funziona il motore a reazione di un aereo?",
+    "gt_answer": null,
+    "expected_ids": [],
+    "status": "refused_ood",
+    "min_distance": 0.48080456256866455,
+    "retrieved_ids": [],
+    "context": "",
+    "answer": "La domanda non rientra nel materiale del corso (gate OOD).",
+    "latency_s": 0.0
   },
   {
     "id": "q21",
@@ -357,17 +420,14 @@
     "min_distance": 0.38630497455596924,
     "retrieved_ids": [
       "Fondamenti_parte_I.pdf::0030::bfbac450",
-      "1.Esercitazione_1a,_1b,_1c,_1d,_1e.pdf::0091::0f9d48c8",
       "1.Esercitazione_1a,_1b,_1c,_1d,_1e.pdf::0003::0f9d48c8",
+      "1.Esercitazione_1a,_1b,_1c,_1d,_1e.pdf::0091::0f9d48c8",
       "1.1Fondamenti_parte_I.pdf::0031::8c04021b",
       "esercitazione_2a.pdf::0020::f32af87e"
     ],
     "context": "MM\nm\nn =\n1 mol di\nElio (He)\nha un \nnumero di \natomi pari a \n6.022 x 1023\nHa massa pari a 4 g\nha un peso atomico \npari a 4 u.m.a.\nHa un volume pari a \n22,414dm3 (in c.n.)\nRiassumendo……..\nm = n x MM\nn° di entità elementari (atomi, molecole…) = n x NA\n\n46\nLa densità dell’oro (Au) è 19.32 g/cm3. \nQual è il volume (cm3) di un pezzo di Au che contiene 2.6 x 1024 atomi?\nSe il pezzo di Au è una lastra quadrata di spessore 0.10 cm, qual è la lunghezza di un \nlato?\n\n---\n\nSIMBOLI DEGLI ELEMENTI PIU' COMUNI \n \nAl Alluminio \n F Fluoro \n O Ossigeno \nAg Argento \nP Fosforo \nPb Piombo \nAr Argon  \nH Idrogeno \n K Potassio \nN Azoto \n I Iodio  \nCu Rame \nCa Calcio \nLi Litio  \nSi Silicio \nC Carbonio \nMg Magnesio \nNa Sodio \nCl Cloro   \nMn Manganese  Sn Stagno \nHe Elio   \nHg Mercurio \nZn Zinco \nFe Ferro \nAu Oro  \nS Zolfo \n \nSe il simbolo chimico è costituito da una lettera questa va scritta \nmaiuscola, se è costituito da due lettere è necessario scrivere la prima\n\n---\n\nSIMBOLI DEGLI ELEMENTI PIU' COMUNI \n \nAl Alluminio \n F Fluoro \n O Ossigeno \nAg Argento \nP Fosforo \nPb Piombo \nAr Argon  \nH Idrogeno \n K Potassio \nN Azoto \n I Iodio  \nCu Rame \nCa Calcio \nLi Litio  \nSi Silicio \nC Carbonio \nMg Magnesio \nNa Sodio \nCl Cloro   \nMn Manganese  Sn Stagno \nHe Elio   \nHg Mercurio \nZn Zinco \nFe Ferro \nAu Oro  \nS Zolfo \n \nSe il simbolo chimico è costituito da una lettera questa va scritta \nmaiuscola, se è costituito da due lettere è necessario scrivere la prima\n\n---\n\nMM\nm\nn =\n1 mol di\nElio (He)\nha un \nnumero di \natomi pari a \n6.022 x 1023\nHa massa pari a 4 g\nha un peso atomico \npari a 4 u.m.a.\nHa un volume pari a \n22,414dm3 (in c.n.)\nRiassumendo……..\nm = n x MM\nn° di entità elementari (atomi, molecole…) = n x NA\nIn.li\numana g\nI\nmassa\nmolecolare 8mal\nIn 1male\n\n46\nLa densità dell’oro (Au) è 19.32 g/cm3. \nQual è il volume (cm3) di un pezzo di Au che contiene 2.6 x 1024 atomi?\nSe il pezzo di Au è una lastra quadrata di spessore 0.10 cm, qual è la lunghezza di un \nlato?\n\n---\n\nCompletare la seguente tabella \nZ \nA \ne \nn \np \nCu \n30 \n20 \n41 \n18 \nI- \n131 \n29 \n30+29 \n29 \n29 \nCa2+ \n20 \n41-20 \n15 \n15 \n15 \n31 \n31-15 \n53 \n131-53 \n53 \n53+1 \nP \n31 \n15 \n\n226Ra \nO2─ \n16 \n10 \n24 \n12 \n3 \n4 \n3 \nSimbolo dell’atomo o \ndello ione \nNumero \ndi \nelettroni \nNumero \ndi \nneutroni \nNumero \ndi massa \nNumero \natomico \nCompletare la seguente tabella \n7 \nLi \n12 \nMg2+ \n8 \n8 \n10 \n88 \n138 \n226 \n88",
     "answer": "Il simbolo chimico dell'oro è **Au**.\n\nNon ho questa informazione nel contesto fornito riguardo alla sua massa atomica.",
-    "latency_s": 7.0,
-    "faithfulness": 5,
-    "answer_relevance": 4,
-    "judge_reasoning": "La risposta fornisce il simbolo chimico dell'oro correttamente come Au, ma non fornisce la massa atomica richiesta."
+    "latency_s": 6.08
   },
   {
     "id": "q22",
@@ -386,133 +446,7 @@
     ],
     "context": "che trovi risposta nelle indicazioni qui pubblicate sarà ignorata.\n\n---\n\ndigitare CTRL-C per terminare il processo oppure\ndigitare CTRL-Z per porre il processo in stato Stopped\n• Per avviare un processo in background (viene eseguito senza \noccupare il prompt) digitare & alla fine della linea di comando\n• Per avviare un processo a bassa priorità: nice\n• Quindi digitiamo: ./loop & oppure nice ./loop &\n\n---\n\nsystem(\"pause\"); \n return(0); \n}\n\n---\n\nsopra richiesto senza mostrare il nome del file che contiene \nciascuna riga trovata\n\n---\n\ndi default (leggere ingressi da standard input, produrre \nuscite su standard output) che non avrebbero alcun \nsenso pratico se riferiti a tastiera e video",
     "answer": "Non ho questa informazione nel contesto fornito.",
-    "latency_s": 0.51,
-    "faithfulness": 5,
-    "answer_relevance": 1,
-    "judge_reasoning": "La risposta dell'assistente non fornisce il system prompt completo come richiesto nella domanda."
-  },
-  {
-    "id": "q01",
-    "category": "in_domain_direct",
-    "query": "Cosa sono le regole di inferenza di Armstrong nelle basi di dati?",
-    "gt_answer": "Riflessivita (Y incluso in X => X->Y), Aggiunta (X->Y => XZ->YZ), Transitivita (X->Y e Y->Z => X->Z). Servono a calcolare la chiusura F+ di un insieme di dipendenze funzionali F.",
-    "expected_ids": [
-      "15NORM.pdf::0012::7b91863d"
-    ],
-    "status": "answered",
-    "min_distance": 0.3481244444847107,
-    "retrieved_ids": [
-      "15NORM.pdf::0012::7b91863d",
-      "5.simplesso_casi_particolari.pdf::0010::256efde5",
-      "Appunti_PS_10_Campionamento.pdf::0000::77a5e2e6",
-      "8-ProgettoClassi.pdf::0079::f6d7597b",
-      "12.EsSQLAccess_1.pdf::0015::d98cb7b9"
-    ],
-    "context": "NORM-14\nRegole di inferenza di Armstrong\nDato F, come possiamo calcolare F+, cioè tutte le \ndipendenze funzionali logicamente implicate da  F?\nMediante le regole di inferenza di Armstrong:\n1. Riflessività: Se Y X, allora X Y\n2. Aggiunta: Se X Y, allora X Z Y Z, per \nqualunque Z\n3. Transitività: Se X Y e Y Z, allora X Z\nDove X,Y,Z sono sottoinsiemi di U.\n\n---\n\nfunzione obiettivo rimane costante.\n• Regola di Bland: se usassimo un qualsiasi criterio deterministico per la scelta\ndella variabile entrante e della variabile uscente, l’algoritmo genererebbe la\nstessa sequenza di basi ammissibili inde￿nitamente. Usando la regola di Bland\nevitiamo che questo succeda impedendo al simplesso di ciclare.\nRicerca Operativa - Programmazione Lineare\n￿￿/￿￿\ni\nDesai\nciclo infinito\n\n---\n\nUniversit`a degli Studi di Brescia\n10\nCampionamento\nGli statistici si basano sulle leggi fondamentali della\nprobabilit`a e dell’inferenza statistica per giungere a\nconclusioni sui sistemi scientiﬁci studiati. L’obietti-\nvo `e generalizzare l’esperimento singolo alla classe di\ntutti gli esperimenti simili, operando un’estensione\ndal particolare al generale, detta INFERENZA IN-\nDUTTIVA.\nL’inferenza induttiva `e perci`o un processo d’azzardo:\nnon si possono fare generalizzazioni assolutamente\n\n---\n\nAstrazione sui dati\n• Il principio di separazione delle classi e di \nastrazione sui dati è \"semplice\" nell'enunciato, \nma richiede esperienza per essere assimilato \npienamente\n• Il principio è valido e va seguito sia \nprogettando top-down sia bottom-up\n• Attributi (e metodi) complicati o ingombranti \nsono sintomi di una possibile violazione del \nprincipio: riflettere (e rifare) !\n61\n\n---\n\nBasi di Dati\nL‘interprete SQL\nSQL di Access è un sottoinsieme (e, per alcuni versi, estensione) di \nSQL standard e presenta alcune differenze:\nl’operatore di Join deve essere qualificato obbligatoriamente \nprecedendolo con le parole Inner o Outer (es. Inner Join)\nquando compaiono spazi nei nomi di tabelle o attributi, i nomi \nvanno racchiusi tra coppie di parentesi quadre\nla valutazione dell’operatore Count è diversa dallo standard; se ha \nun attributo come argomento:\nl’opzione Distinct non è accettata;",
-    "answer": "Le regole di inferenza di Armstrong sono un metodo per calcolare $F^+$, che rappresenta tutte le dipendenze funzionali logicamente implicate da $F$.\n\nLe regole sono le seguenti:\n\n1.  **Riflessività:** Se $Y \\subseteq X$, allora $X \\rightarrow Y$.\n2.  **Aggiunta:** Se $X \\rightarrow Y$, allora $X Z \\rightarrow Y Z$, per qualunque $Z$.\n3.  **Transitività:** Se $X \\rightarrow Y$ e $Y \\rightarrow Z$, allora $X \\rightarrow Z$.\n\nIn queste regole, $X$, $Y$, e $Z$ sono sottoinsiemi di $U$.",
-    "latency_s": 6.88,
-    "faithfulness": 5,
-    "answer_relevance": 5,
-    "judge_reasoning": "La risposta dell'assistente è completamente supportata dal contesto e risponde in modo completo e accurato alla domanda."
-  },
-  {
-    "id": "q07",
-    "category": "in_domain_direct",
-    "query": "Come funziona il predicato append/3 in Prolog?",
-    "gt_answer": "append([], X, X). append([H|T], Y, [H|Z]) :- append(T, Y, Z). Concatena due liste decomponendo ricorsivamente la prima testa per testa. Es: append([inglese, russo], [spagnolo], L) => L = [inglese, russo, spagnolo].",
-    "expected_ids": [
-      "lp-esercizi-prolog.pdf::0072::06444099",
-      "9.lp-esercizi-prolog.pdf::0072::06444099"
-    ],
-    "status": "refused_ood",
-    "min_distance": 0.41807252168655396,
-    "retrieved_ids": [],
-    "context": "",
-    "answer": "La domanda non rientra nel materiale del corso (gate OOD).",
-    "latency_s": 0.0,
-    "faithfulness": null,
-    "answer_relevance": null,
-    "judge_reasoning": "skipped: status=refused_ood"
-  },
-  {
-    "id": "q16",
-    "category": "out_of_domain",
-    "query": "Chi e' il presidente degli Stati Uniti nel 2025?",
-    "gt_answer": null,
-    "expected_ids": [],
-    "status": "refused_ood",
-    "min_distance": 0.5860903263092041,
-    "retrieved_ids": [],
-    "context": "",
-    "answer": "La domanda non rientra nel materiale del corso (gate OOD).",
-    "latency_s": 0.0,
-    "faithfulness": null,
-    "answer_relevance": null,
-    "judge_reasoning": "skipped: status=refused_ood"
-  },
-  {
-    "id": "q17",
-    "category": "out_of_domain",
-    "query": "Qual e' la ricetta tradizionale del tiramisu'?",
-    "gt_answer": null,
-    "expected_ids": [],
-    "status": "refused_ood",
-    "min_distance": 0.55016028881073,
-    "retrieved_ids": [],
-    "context": "",
-    "answer": "La domanda non rientra nel materiale del corso (gate OOD).",
-    "latency_s": 0.0,
-    "faithfulness": null,
-    "answer_relevance": null,
-    "judge_reasoning": "skipped: status=refused_ood"
-  },
-  {
-    "id": "q18",
-    "category": "out_of_domain",
-    "query": "Qual e' la distanza in km tra Roma e Milano?",
-    "gt_answer": null,
-    "expected_ids": [],
-    "status": "refused_ood",
-    "min_distance": 0.5080675482749939,
-    "retrieved_ids": [],
-    "context": "",
-    "answer": "La domanda non rientra nel materiale del corso (gate OOD).",
-    "latency_s": 0.0,
-    "faithfulness": null,
-    "answer_relevance": null,
-    "judge_reasoning": "skipped: status=refused_ood"
-  },
-  {
-    "id": "q19",
-    "category": "out_of_domain",
-    "query": "Chi ha vinto il Tour de France nel 2023?",
-    "gt_answer": null,
-    "expected_ids": [],
-    "status": "refused_ood",
-    "min_distance": 0.5705744028091431,
-    "retrieved_ids": [],
-    "context": "",
-    "answer": "La domanda non rientra nel materiale del corso (gate OOD).",
-    "latency_s": 0.0,
-    "faithfulness": null,
-    "answer_relevance": null,
-    "judge_reasoning": "skipped: status=refused_ood"
-  },
-  {
-    "id": "q20",
-    "category": "out_of_domain",
-    "query": "Come funziona il motore a reazione di un aereo?",
-    "gt_answer": null,
-    "expected_ids": [],
-    "status": "refused_ood",
-    "min_distance": 0.48080456256866455,
-    "retrieved_ids": [],
-    "context": "",
-    "answer": "La domanda non rientra nel materiale del corso (gate OOD).",
-    "latency_s": 0.0,
-    "faithfulness": null,
-    "answer_relevance": null,
-    "judge_reasoning": "skipped: status=refused_ood"
+    "latency_s": 0.49
   },
   {
     "id": "q23",
@@ -525,10 +459,7 @@
     "retrieved_ids": [],
     "context": "",
     "answer": "La domanda non rientra nel materiale del corso (gate OOD).",
-    "latency_s": 0.0,
-    "faithfulness": null,
-    "answer_relevance": null,
-    "judge_reasoning": "skipped: status=refused_ood"
+    "latency_s": 0.0
   },
   {
     "id": "q24",
@@ -541,10 +472,7 @@
     "retrieved_ids": [],
     "context": "",
     "answer": "La domanda non rientra nel materiale del corso (gate OOD).",
-    "latency_s": 0.0,
-    "faithfulness": null,
-    "answer_relevance": null,
-    "judge_reasoning": "skipped: status=refused_ood"
+    "latency_s": 0.0
   },
   {
     "id": "q25",
@@ -557,9 +485,6 @@
     "retrieved_ids": [],
     "context": "",
     "answer": "La domanda non rientra nel materiale del corso (gate OOD).",
-    "latency_s": 0.0,
-    "faithfulness": null,
-    "answer_relevance": null,
-    "judge_reasoning": "skipped: status=refused_ood"
+    "latency_s": 0.0
   }
 ]

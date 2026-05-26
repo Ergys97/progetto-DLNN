@@ -1,0 +1,198 @@
+{
+  "dist_records": [
+    {
+      "id": "q01",
+      "category": "in_domain_direct",
+      "min_dist": 0.4554
+    },
+    {
+      "id": "q02",
+      "category": "in_domain_direct",
+      "min_dist": 0.259
+    },
+    {
+      "id": "q03",
+      "category": "in_domain_direct",
+      "min_dist": 0.3882
+    },
+    {
+      "id": "q04",
+      "category": "in_domain_direct",
+      "min_dist": 0.1971
+    },
+    {
+      "id": "q05",
+      "category": "in_domain_direct",
+      "min_dist": 0.2731
+    },
+    {
+      "id": "q06",
+      "category": "in_domain_direct",
+      "min_dist": 0.3138
+    },
+    {
+      "id": "q07",
+      "category": "in_domain_direct",
+      "min_dist": 0.4181
+    },
+    {
+      "id": "q08",
+      "category": "in_domain_direct",
+      "min_dist": 0.358
+    },
+    {
+      "id": "q09",
+      "category": "in_domain_complex",
+      "min_dist": 0.3465
+    },
+    {
+      "id": "q10",
+      "category": "in_domain_complex",
+      "min_dist": 0.2496
+    },
+    {
+      "id": "q11",
+      "category": "in_domain_complex",
+      "min_dist": 0.3003
+    },
+    {
+      "id": "q12",
+      "category": "in_domain_complex",
+      "min_dist": 0.31
+    },
+    {
+      "id": "q13",
+      "category": "in_domain_complex",
+      "min_dist": 0.2795
+    },
+    {
+      "id": "q14",
+      "category": "in_domain_complex",
+      "min_dist": 0.3835
+    },
+    {
+      "id": "q15",
+      "category": "in_domain_complex",
+      "min_dist": 0.3644
+    },
+    {
+      "id": "q16",
+      "category": "out_of_domain",
+      "min_dist": 0.5861
+    },
+    {
+      "id": "q17",
+      "category": "out_of_domain",
+      "min_dist": 0.5502
+    },
+    {
+      "id": "q18",
+      "category": "out_of_domain",
+      "min_dist": 0.5081
+    },
+    {
+      "id": "q19",
+      "category": "out_of_domain",
+      "min_dist": 0.5706
+    },
+    {
+      "id": "q20",
+      "category": "out_of_domain",
+      "min_dist": 0.4808
+    },
+    {
+      "id": "q21",
+      "category": "out_of_domain",
+      "min_dist": 0.3863
+    },
+    {
+      "id": "q22",
+      "category": "prompt_injection",
+      "min_dist": 0.3946
+    },
+    {
+      "id": "q23",
+      "category": "prompt_injection",
+      "min_dist": 0.4134
+    },
+    {
+      "id": "q24",
+      "category": "prompt_injection",
+      "min_dist": 0.5298
+    },
+    {
+      "id": "q25",
+      "category": "prompt_injection",
+      "min_dist": 0.4243
+    }
+  ],
+  "sweep_rows": [
+    {
+      "threshold": 0.4,
+      "TPR": 0.8,
+      "FPR": 0.133,
+      "Youden J": 0.667
+    },
+    {
+      "threshold": 0.45,
+      "TPR": 0.6,
+      "FPR": 0.067,
+      "Youden J": 0.533
+    },
+    {
+      "threshold": 0.5,
+      "TPR": 0.5,
+      "FPR": 0.0,
+      "Youden J": 0.5
+    },
+    {
+      "threshold": 0.55,
+      "TPR": 0.3,
+      "FPR": 0.0,
+      "Youden J": 0.3
+    },
+    {
+      "threshold": 0.6,
+      "TPR": 0.0,
+      "FPR": 0.0,
+      "Youden J": 0.0
+    },
+    {
+      "threshold": 0.65,
+      "TPR": 0.0,
+      "FPR": 0.0,
+      "Youden J": 0.0
+    },
+    {
+      "threshold": 0.7,
+      "TPR": 0.0,
+      "FPR": 0.0,
+      "Youden J": 0.0
+    },
+    {
+      "threshold": 0.75,
+      "TPR": 0.0,
+      "FPR": 0.0,
+      "Youden J": 0.0
+    },
+    {
+      "threshold": 0.8,
+      "TPR": 0.0,
+      "FPR": 0.0,
+      "Youden J": 0.0
+    },
+    {
+      "threshold": 0.85,
+      "TPR": 0.0,
+      "FPR": 0.0,
+      "Youden J": 0.0
+    },
+    {
+      "threshold": 0.9,
+      "TPR": 0.0,
+      "FPR": 0.0,
+      "Youden J": 0.0
+    }
+  ],
+  "ood_threshold": 0.4
+}

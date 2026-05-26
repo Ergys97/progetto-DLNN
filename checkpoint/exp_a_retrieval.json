@@ -1,0 +1,110 @@
+{
+  "rows": [
+    {
+      "Strategia": "fixed_256",
+      "Top-k": 3,
+      "Hit@k": 0.8,
+      "MRR": 0.687,
+      "Recall@k": 0.461
+    },
+    {
+      "Strategia": "fixed_256",
+      "Top-k": 5,
+      "Hit@k": 0.867,
+      "MRR": 0.687,
+      "Recall@k": 0.572
+    },
+    {
+      "Strategia": "fixed_256",
+      "Top-k": 10,
+      "Hit@k": 0.933,
+      "MRR": 0.687,
+      "Recall@k": 0.673
+    },
+    {
+      "Strategia": "fixed_512",
+      "Top-k": 3,
+      "Hit@k": 0.8,
+      "MRR": 0.736,
+      "Recall@k": 0.383
+    },
+    {
+      "Strategia": "fixed_512",
+      "Top-k": 5,
+      "Hit@k": 0.867,
+      "MRR": 0.736,
+      "Recall@k": 0.462
+    },
+    {
+      "Strategia": "fixed_512",
+      "Top-k": 10,
+      "Hit@k": 0.867,
+      "MRR": 0.736,
+      "Recall@k": 0.586
+    },
+    {
+      "Strategia": "fixed_1024",
+      "Top-k": 3,
+      "Hit@k": 0.8,
+      "MRR": 0.7,
+      "Recall@k": 0.432
+    },
+    {
+      "Strategia": "fixed_1024",
+      "Top-k": 5,
+      "Hit@k": 0.8,
+      "MRR": 0.7,
+      "Recall@k": 0.462
+    },
+    {
+      "Strategia": "fixed_1024",
+      "Top-k": 10,
+      "Hit@k": 0.867,
+      "MRR": 0.7,
+      "Recall@k": 0.502
+    },
+    {
+      "Strategia": "recursive_512",
+      "Top-k": 3,
+      "Hit@k": 1.0,
+      "MRR": 1.0,
+      "Recall@k": 0.877
+    },
+    {
+      "Strategia": "recursive_512",
+      "Top-k": 5,
+      "Hit@k": 1.0,
+      "MRR": 1.0,
+      "Recall@k": 1.0
+    },
+    {
+      "Strategia": "recursive_512",
+      "Top-k": 10,
+      "Hit@k": 1.0,
+      "MRR": 1.0,
+      "Recall@k": 1.0
+    },
+    {
+      "Strategia": "sentence_5",
+      "Top-k": 3,
+      "Hit@k": 0.4,
+      "MRR": 0.334,
+      "Recall@k": 0.242
+    },
+    {
+      "Strategia": "sentence_5",
+      "Top-k": 5,
+      "Hit@k": 0.467,
+      "MRR": 0.334,
+      "Recall@k": 0.256
+    },
+    {
+      "Strategia": "sentence_5",
+      "Top-k": 10,
+      "Hit@k": 0.533,
+      "MRR": 0.334,
+      "Recall@k": 0.278
+    }
+  ],
+  "best_strategy": "recursive_512"
+}

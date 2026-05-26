@@ -9,3 +9,4 @@
 /checkpoint/embeddings_fixed_1024.npz
 /checkpoint/embeddings_recursive_512.npz
 /checkpoint/embeddings_sentence_5.npz
+src/__pycache__/*
