@@ -77,7 +77,7 @@
     "Hit@5 (rerank)": 1.0,
     "MRR (baseline)": 0.5,
     "MRR (rerank)": 0.5,
-    "Recall@5 (baseline)": 0.5,
+    "Recall@5 (baseline)": 0.75,
     "Recall@5 (rerank)": 0.5
   },
   {
@@ -131,6 +131,177 @@
     "Hit@5 (rerank)": 1.0,
     "MRR (baseline)": 1.0,
     "MRR (rerank)": 1.0,
+    "Recall@5 (baseline)": 1.0,
+    "Recall@5 (rerank)": 1.0
+  },
+  {
+    "id": "q21",
+    "Hit@5 (baseline)": 1.0,
+    "Hit@5 (rerank)": 1.0,
+    "MRR (baseline)": 1.0,
+    "MRR (rerank)": 0.5,
+    "Recall@5 (baseline)": 1.0,
+    "Recall@5 (rerank)": 1.0
+  },
+  {
+    "id": "q26",
+    "Hit@5 (baseline)": 1.0,
+    "Hit@5 (rerank)": 1.0,
+    "MRR (baseline)": 0.3333333333333333,
+    "MRR (rerank)": 1.0,
+    "Recall@5 (baseline)": 1.0,
+    "Recall@5 (rerank)": 1.0
+  },
+  {
+    "id": "q27",
+    "Hit@5 (baseline)": 1.0,
+    "Hit@5 (rerank)": 1.0,
+    "MRR (baseline)": 0.5,
+    "MRR (rerank)": 0.5,
+    "Recall@5 (baseline)": 1.0,
+    "Recall@5 (rerank)": 1.0
+  },
+  {
+    "id": "q28",
+    "Hit@5 (baseline)": 1.0,
+    "Hit@5 (rerank)": 1.0,
+    "MRR (baseline)": 1.0,
+    "MRR (rerank)": 1.0,
+    "Recall@5 (baseline)": 1.0,
+    "Recall@5 (rerank)": 0.6666666666666666
+  },
+  {
+    "id": "q29",
+    "Hit@5 (baseline)": 1.0,
+    "Hit@5 (rerank)": 1.0,
+    "MRR (baseline)": 0.2,
+    "MRR (rerank)": 0.5,
+    "Recall@5 (baseline)": 1.0,
+    "Recall@5 (rerank)": 1.0
+  },
+  {
+    "id": "q30",
+    "Hit@5 (baseline)": 1.0,
+    "Hit@5 (rerank)": 1.0,
+    "MRR (baseline)": 1.0,
+    "MRR (rerank)": 0.2,
+    "Recall@5 (baseline)": 1.0,
+    "Recall@5 (rerank)": 1.0
+  },
+  {
+    "id": "q31",
+    "Hit@5 (baseline)": 1.0,
+    "Hit@5 (rerank)": 1.0,
+    "MRR (baseline)": 1.0,
+    "MRR (rerank)": 1.0,
+    "Recall@5 (baseline)": 1.0,
+    "Recall@5 (rerank)": 1.0
+  },
+  {
+    "id": "q36",
+    "Hit@5 (baseline)": 0.0,
+    "Hit@5 (rerank)": 0.0,
+    "MRR (baseline)": 0.0,
+    "MRR (rerank)": 0.0,
+    "Recall@5 (baseline)": 0.0,
+    "Recall@5 (rerank)": 0.0
+  },
+  {
+    "id": "q37",
+    "Hit@5 (baseline)": 1.0,
+    "Hit@5 (rerank)": 0.0,
+    "MRR (baseline)": 0.5,
+    "MRR (rerank)": 0.0,
+    "Recall@5 (baseline)": 1.0,
+    "Recall@5 (rerank)": 0.0
+  },
+  {
+    "id": "q38",
+    "Hit@5 (baseline)": 1.0,
+    "Hit@5 (rerank)": 1.0,
+    "MRR (baseline)": 1.0,
+    "MRR (rerank)": 1.0,
+    "Recall@5 (baseline)": 1.0,
+    "Recall@5 (rerank)": 1.0
+  },
+  {
+    "id": "q39",
+    "Hit@5 (baseline)": 1.0,
+    "Hit@5 (rerank)": 1.0,
+    "MRR (baseline)": 1.0,
+    "MRR (rerank)": 1.0,
+    "Recall@5 (baseline)": 1.0,
+    "Recall@5 (rerank)": 1.0
+  },
+  {
+    "id": "q40",
+    "Hit@5 (baseline)": 1.0,
+    "Hit@5 (rerank)": 1.0,
+    "MRR (baseline)": 1.0,
+    "MRR (rerank)": 0.3333333333333333,
+    "Recall@5 (baseline)": 1.0,
+    "Recall@5 (rerank)": 1.0
+  },
+  {
+    "id": "q41",
+    "Hit@5 (baseline)": 1.0,
+    "Hit@5 (rerank)": 1.0,
+    "MRR (baseline)": 1.0,
+    "MRR (rerank)": 1.0,
+    "Recall@5 (baseline)": 1.0,
+    "Recall@5 (rerank)": 1.0
+  },
+  {
+    "id": "q42",
+    "Hit@5 (baseline)": 1.0,
+    "Hit@5 (rerank)": 1.0,
+    "MRR (baseline)": 1.0,
+    "MRR (rerank)": 1.0,
+    "Recall@5 (baseline)": 1.0,
+    "Recall@5 (rerank)": 1.0
+  },
+  {
+    "id": "q43",
+    "Hit@5 (baseline)": 1.0,
+    "Hit@5 (rerank)": 1.0,
+    "MRR (baseline)": 1.0,
+    "MRR (rerank)": 1.0,
+    "Recall@5 (baseline)": 1.0,
+    "Recall@5 (rerank)": 1.0
+  },
+  {
+    "id": "q44",
+    "Hit@5 (baseline)": 1.0,
+    "Hit@5 (rerank)": 1.0,
+    "MRR (baseline)": 0.5,
+    "MRR (rerank)": 1.0,
+    "Recall@5 (baseline)": 1.0,
+    "Recall@5 (rerank)": 1.0
+  },
+  {
+    "id": "q45",
+    "Hit@5 (baseline)": 1.0,
+    "Hit@5 (rerank)": 1.0,
+    "MRR (baseline)": 1.0,
+    "MRR (rerank)": 1.0,
+    "Recall@5 (baseline)": 1.0,
+    "Recall@5 (rerank)": 1.0
+  },
+  {
+    "id": "q46",
+    "Hit@5 (baseline)": 1.0,
+    "Hit@5 (rerank)": 1.0,
+    "MRR (baseline)": 0.5,
+    "MRR (rerank)": 1.0,
+    "Recall@5 (baseline)": 1.0,
+    "Recall@5 (rerank)": 1.0
+  },
+  {
+    "id": "q47",
+    "Hit@5 (baseline)": 1.0,
+    "Hit@5 (rerank)": 1.0,
+    "MRR (baseline)": 0.3333333333333333,
+    "MRR (rerank)": 0.3333333333333333,
     "Recall@5 (baseline)": 1.0,
     "Recall@5 (rerank)": 1.0
   }

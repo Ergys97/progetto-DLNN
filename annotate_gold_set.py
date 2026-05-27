@@ -90,7 +90,7 @@ def build_collection(strategy: str):
 def main():
     col, embedder, _ = build_collection(STRATEGY)
 
-    gs_path = CHECKPOINT_DIR / "gold_set_v2.json"
+    gs_path = CHECKPOINT_DIR / "gold_set.json"
     with open(gs_path, "r", encoding="utf-8") as f:
         gold_set = json.load(f)
 

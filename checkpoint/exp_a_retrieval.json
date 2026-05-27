@@ -3,107 +3,107 @@
     {
       "Strategia": "fixed_256",
       "Top-k": 3,
-      "Hit@k": 0.8,
-      "MRR": 0.673,
-      "Recall@k": 0.447
+      "Hit@k": 0.765,
+      "MRR": 0.64,
+      "Recall@k": 0.457
     },
     {
       "Strategia": "fixed_256",
       "Top-k": 5,
-      "Hit@k": 0.8,
-      "MRR": 0.673,
-      "Recall@k": 0.556
+      "Hit@k": 0.824,
+      "MRR": 0.64,
+      "Recall@k": 0.564
     },
     {
       "Strategia": "fixed_256",
       "Top-k": 10,
-      "Hit@k": 0.867,
-      "MRR": 0.673,
-      "Recall@k": 0.638
+      "Hit@k": 0.853,
+      "MRR": 0.64,
+      "Recall@k": 0.625
     },
     {
       "Strategia": "fixed_512",
       "Top-k": 3,
-      "Hit@k": 0.8,
-      "MRR": 0.736,
-      "Recall@k": 0.404
+      "Hit@k": 0.794,
+      "MRR": 0.724,
+      "Recall@k": 0.492
     },
     {
       "Strategia": "fixed_512",
       "Top-k": 5,
-      "Hit@k": 0.867,
-      "MRR": 0.736,
-      "Recall@k": 0.496
+      "Hit@k": 0.853,
+      "MRR": 0.724,
+      "Recall@k": 0.576
     },
     {
       "Strategia": "fixed_512",
       "Top-k": 10,
-      "Hit@k": 0.867,
-      "MRR": 0.736,
-      "Recall@k": 0.586
+      "Hit@k": 0.853,
+      "MRR": 0.724,
+      "Recall@k": 0.641
     },
     {
       "Strategia": "fixed_1024",
       "Top-k": 3,
-      "Hit@k": 0.733,
-      "MRR": 0.667,
-      "Recall@k": 0.369
+      "Hit@k": 0.647,
+      "MRR": 0.604,
+      "Recall@k": 0.339
     },
     {
       "Strategia": "fixed_1024",
       "Top-k": 5,
-      "Hit@k": 0.733,
-      "MRR": 0.667,
-      "Recall@k": 0.399
+      "Hit@k": 0.735,
+      "MRR": 0.604,
+      "Recall@k": 0.421
     },
     {
       "Strategia": "fixed_1024",
       "Top-k": 10,
-      "Hit@k": 0.8,
-      "MRR": 0.667,
-      "Recall@k": 0.416
+      "Hit@k": 0.765,
+      "MRR": 0.604,
+      "Recall@k": 0.453
     },
     {
       "Strategia": "recursive_512",
       "Top-k": 3,
-      "Hit@k": 0.933,
-      "MRR": 0.9,
-      "Recall@k": 0.778
+      "Hit@k": 0.941,
+      "MRR": 0.834,
+      "Recall@k": 0.794
     },
     {
       "Strategia": "recursive_512",
       "Top-k": 5,
-      "Hit@k": 0.933,
-      "MRR": 0.9,
-      "Recall@k": 0.881
+      "Hit@k": 0.971,
+      "MRR": 0.834,
+      "Recall@k": 0.948
     },
     {
       "Strategia": "recursive_512",
       "Top-k": 10,
-      "Hit@k": 0.933,
-      "MRR": 0.9,
-      "Recall@k": 0.903
+      "Hit@k": 0.971,
+      "MRR": 0.834,
+      "Recall@k": 0.957
     },
     {
       "Strategia": "sentence_5",
       "Top-k": 3,
-      "Hit@k": 0.333,
-      "MRR": 0.312,
-      "Recall@k": 0.179
+      "Hit@k": 0.294,
+      "MRR": 0.236,
+      "Recall@k": 0.211
     },
     {
       "Strategia": "sentence_5",
       "Top-k": 5,
-      "Hit@k": 0.4,
-      "MRR": 0.312,
-      "Recall@k": 0.192
+      "Hit@k": 0.412,
+      "MRR": 0.236,
+      "Recall@k": 0.256
     },
     {
       "Strategia": "sentence_5",
       "Top-k": 10,
-      "Hit@k": 0.467,
-      "MRR": 0.312,
-      "Recall@k": 0.214
+      "Hit@k": 0.471,
+      "MRR": 0.236,
+      "Recall@k": 0.296
     }
   ],
   "best_strategy": "recursive_512"
