@@ -71,6 +71,7 @@ def rag_pipeline(
     k_final: int = 5,
     use_rerank: bool = True,
     verbose: bool = False,
+    generator_backend: str = '',
 ) -> dict:
     # 1. OOD gate
     min_d = min_distance(query, components.embedder, components.collection)
@@ -111,18 +112,28 @@ def rag_pipeline(
     context   = '\n\n---\n\n'.join(doc for _, doc in final)
 
     # 4. Generate
-    start = time.time()
-    resp  = generator_client.chat.completions.create(
+    kwargs: dict = dict(
         model=generator_model,
         messages=[
             {'role': 'system', 'content': SYSTEM_PROMPT_RAG},
             {'role': 'user',   'content': f'CONTESTO:\n{context}\n\nDOMANDA: {query}'},
         ],
         temperature=0.2,
-        max_tokens=512,
+        max_tokens=1024,
     )
+    # Disable DeepSeek thinking mode: answer lives in content, not reasoning_content
+    if generator_backend == 'deepseek':
+        kwargs['extra_body'] = {'thinking': {'type': 'disabled'}}
+
+    start = time.time()
+    resp  = generator_client.chat.completions.create(**kwargs)
     latency = time.time() - start
-    answer  = resp.choices[0].message.content
+
+    msg    = resp.choices[0].message
+    answer = msg.content or ''
+    # Fallback: some thinking models return content in reasoning_content
+    if not answer.strip():
+        answer = getattr(msg, 'reasoning_content', '') or getattr(msg, 'thinking', '') or ''
 
     if verbose:
         print(f'[OK] {generator_model} | latency={latency:.2f}s | min_dist={min_d:.3f}')
@@ -167,6 +178,7 @@ def run_pipeline_batch(
             return rag_pipeline(
                 q['query'], components, generator_client, generator_model,
                 ood_threshold, hybrid_alpha,
+                generator_backend=generator_backend,
             )
         except Exception as e:
             print(f'    ERR: {e}')

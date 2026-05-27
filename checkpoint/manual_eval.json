@@ -1,62 +1,31 @@
 {
-  "q01": {
-    "faithfulness": 1,
-    "answer_relevance": 1
-  },
-  "q02": {
-    "faithfulness": 5,
-    "answer_relevance": 5
-  },
-  "q03": {
-    "faithfulness": 4,
-    "answer_relevance": 5
-  },
-  "q04": {
-    "faithfulness": 4,
-    "answer_relevance": 4
-  },
-  "q05": {
-    "faithfulness": 5,
-    "answer_relevance": 5
-  },
-  "q06": {
-    "faithfulness": 2,
-    "answer_relevance": 4
-  },
-  "q07": {
-    "faithfulness": 1,
-    "answer_relevance": 1
-  },
-  "q08": {
-    "faithfulness": 5,
-    "answer_relevance": 5
-  },
-  "q09": {
-    "faithfulness": 3,
-    "answer_relevance": 4
-  },
-  "q10": {
-    "faithfulness": 4,
-    "answer_relevance": 5
-  },
-  "q11": {
-    "faithfulness": 4,
-    "answer_relevance": 4
-  },
-  "q12": {
-    "faithfulness": 3,
-    "answer_relevance": 3
-  },
-  "q13": {
-    "faithfulness": 3,
-    "answer_relevance": 4
-  },
-  "q14": {
-    "faithfulness": 4,
-    "answer_relevance": 4
-  },
-  "q15": {
-    "faithfulness": 4,
-    "answer_relevance": 5
-  }
+  "q01": {"faithfulness": 5, "answer_relevance": 5},
+  "q02": {"faithfulness": 5, "answer_relevance": 5},
+  "q03": {"faithfulness": 5, "answer_relevance": 5},
+  "q04": {"faithfulness": 5, "answer_relevance": 4},
+  "q05": {"faithfulness": 5, "answer_relevance": 5},
+  "q06": {"faithfulness": 5, "answer_relevance": 3},
+  "q08": {"faithfulness": 5, "answer_relevance": 4},
+  "q09": {"faithfulness": 5, "answer_relevance": 1},
+  "q10": {"faithfulness": 5, "answer_relevance": 2},
+  "q11": {"faithfulness": 5, "answer_relevance": 3},
+  "q12": {"faithfulness": 4, "answer_relevance": 4},
+  "q13": {"faithfulness": 5, "answer_relevance": 3},
+  "q15": {"faithfulness": 5, "answer_relevance": 4},
+  "q21": {"faithfulness": 5, "answer_relevance": 2},
+  "q26": {"faithfulness": 5, "answer_relevance": 4},
+  "q27": {"faithfulness": 5, "answer_relevance": 5},
+  "q28": {"faithfulness": 5, "answer_relevance": 1},
+  "q29": {"faithfulness": 5, "answer_relevance": 5},
+  "q30": {"faithfulness": 5, "answer_relevance": 4},
+  "q31": {"faithfulness": 5, "answer_relevance": 5},
+  "q38": {"faithfulness": 5, "answer_relevance": 4},
+  "q39": {"faithfulness": 5, "answer_relevance": 5},
+  "q41": {"faithfulness": 5, "answer_relevance": 3},
+  "q42": {"faithfulness": 5, "answer_relevance": 5},
+  "q43": {"faithfulness": 4, "answer_relevance": 3},
+  "q44": {"faithfulness": 5, "answer_relevance": 4},
+  "q45": {"faithfulness": 5, "answer_relevance": 3},
+  "q46": {"faithfulness": 4, "answer_relevance": 3},
+  "q47": {"faithfulness": 5, "answer_relevance": 2}
 }

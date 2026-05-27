@@ -14,8 +14,8 @@ DEEPSEEK_BASE_URL = 'https://api.deepseek.com'
 GEMINI_BASE_URL   = 'https://generativelanguage.googleapis.com/v1beta/openai/'
 
 # ── Model selection (override in the notebook if needed) ────────────────
-GENERATOR_BACKEND = 'ollama'          # 'ollama' | 'groq' | 'deepseek'
-GENERATOR_MODEL   = 'gemma4:e4b'
+GENERATOR_BACKEND = 'deepseek'        # 'ollama' | 'groq' | 'deepseek'
+GENERATOR_MODEL   = 'deepseek-v4-flash'
 JUDGE_BACKEND     = 'deepseek'        # 'ollama' | 'groq' | 'gemini' | 'deepseek'
 JUDGE_MODEL       = 'deepseek-v4-pro'
 EMBEDDING_MODEL   = 'BAAI/bge-m3'

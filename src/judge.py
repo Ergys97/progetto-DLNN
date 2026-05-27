@@ -286,11 +286,15 @@ def judge_delay(judge_backend: str, judge_model: str) -> float:
     Conservative inter-call delay in seconds.
     Groq free tier: ~8K TPM; each judge call ~2500 tokens → ~3 calls/min → 20s.
     Gemini free tier: 15 RPM → 4s, but we use 6s for safety.
+    DeepSeek paid API: rate limits >> Groq free tier; backoff in call_judge_with_retry
+                       gestisce i 429, quindi basta un buffer minimo di 1s.
     Ollama: no limit.
     """
     if judge_backend == 'ollama':
         return 0.0
     if judge_backend == 'gemini':
         return 6.0
-    # groq / deepseek / openai
+    if judge_backend == 'deepseek':
+        return 1.0
+    # groq / openai
     return 20.0

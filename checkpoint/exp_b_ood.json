@@ -3,7 +3,7 @@
     {
       "id": "q01",
       "category": "in_domain_direct",
-      "min_dist": 0.3481
+      "min_dist": 0.4554
     },
     {
       "id": "q02",
@@ -33,7 +33,7 @@
     {
       "id": "q07",
       "category": "in_domain_direct",
-      "min_dist": 0.4841
+      "min_dist": 0.4181
     },
     {
       "id": "q08",
@@ -168,7 +168,7 @@
     {
       "id": "q34",
       "category": "out_of_domain",
-      "min_dist": 0.5714
+      "min_dist": 0.5707
     },
     {
       "id": "q35",
@@ -178,7 +178,7 @@
     {
       "id": "q36",
       "category": "in_domain_direct",
-      "min_dist": 0.5538
+      "min_dist": 0.5656
     },
     {
       "id": "q37",
@@ -238,7 +238,7 @@
     {
       "id": "q48",
       "category": "out_of_domain",
-      "min_dist": 0.5192
+      "min_dist": 0.5195
     },
     {
       "id": "q49",
@@ -255,8 +255,8 @@
     {
       "threshold": 0.4,
       "TPR": 0.938,
-      "FPR": 0.118,
-      "Youden J": 0.82
+      "FPR": 0.147,
+      "Youden J": 0.79
     },
     {
       "threshold": 0.45,
