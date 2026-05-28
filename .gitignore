@@ -1,12 +1,31 @@
-/.claude
-/.env
-/CLAUDE.md
-/Triennale
-/checkpoint/chunks.pkl
-/checkpoint/corpus.pkl
-/checkpoint/embeddings_fixed_256.npz
-/checkpoint/embeddings_fixed_512.npz
-/checkpoint/embeddings_fixed_1024.npz
-/checkpoint/embeddings_recursive_512.npz
-/checkpoint/embeddings_sentence_5.npz
-src/__pycache__/*
+# File di configurazione locale
+.env
+.env.*
+!.env.example
+
+# File temporanei degli agenti di sviluppo
+.claude/
+.antigravitycli/
+CLAUDE.md
+
+# File di sistema ed editor
+.DS_Store
+**/.DS_Store
+.vscode/
+.idea/
+
+# Dataset grezzo dei corsi (molto pesante)
+/Triennale/
+
+# Checkpoint NumPy e Pickle (troppo pesanti per Git)
+/checkpoint/*.pkl
+/checkpoint/*.npz
+
+# Cache di Python
+**/__pycache__/
+*.pyc
+
+# Ambienti virtuali
+venv/
+.venv/
+env/

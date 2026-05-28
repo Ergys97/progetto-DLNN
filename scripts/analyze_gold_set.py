@@ -11,7 +11,8 @@ import pickle
 import hashlib
 from pathlib import Path
 
-CHECKPOINT_DIR = Path("checkpoint")
+_HERE = Path(__file__).resolve().parent
+CHECKPOINT_DIR = _HERE.parent / "checkpoint"
 STRATEGY = "recursive_512"
 
 def make_chunk_id(source: str, chunk_idx: int, text: str) -> str:

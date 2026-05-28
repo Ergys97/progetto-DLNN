@@ -23,7 +23,8 @@ from pathlib import Path
 
 import numpy as np
 
-CHECKPOINT_DIR  = Path("checkpoint")
+_HERE = Path(__file__).resolve().parent
+CHECKPOINT_DIR = _HERE.parent / "checkpoint"
 STRATEGY        = "recursive_512"   # strategia di riferimento (cambia se preferisci un'altra)
 EMBEDDING_MODEL = "BAAI/bge-m3"
 TOP_K           = 20

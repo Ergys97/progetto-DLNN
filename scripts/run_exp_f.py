@@ -8,9 +8,10 @@ import sys, os, json, time, importlib, pickle
 sys.stdout.reconfigure(encoding='utf-8')
 
 # ── Setup path ──────────────────────────────────────────────────────────
-_root = os.path.dirname(os.path.abspath(__file__))
+_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if _root not in sys.path:
     sys.path.insert(0, _root)
+
 
 import src.config as cfg
 import src.embeddings as emb_mod

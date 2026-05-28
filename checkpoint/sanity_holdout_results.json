@@ -1,0 +1,97 @@
+[
+  {
+    "id": "s01",
+    "kind": "direct",
+    "topic": "Reti - DHCP",
+    "query": "Quali parametri di rete fornisce DHCP a un dispositivo che si collega a una sottorete?",
+    "expected_answer": "DHCP fornisce i parametri necessari per accedere alla rete: indirizzo IP, subnet mask, default gateway e DNS server/cache resolver. L indirizzo IP e una risorsa non condivisibile, mentre gli altri parametri sono comuni alla sottorete.",
+    "status": "answered",
+    "min_distance": 0.296084463596344,
+    "retrieved_ids": [
+      "15.SupportoAmministrazione.pdf::0002::fc1f0620",
+      "15.SupportoAmministrazione.pdf::0001::6da2c288",
+      "PAJC_L09_J_Neworks.pdf::0010::5cf2f1f1",
+      "PAJC_L09_J_Neworks_(2).pdf::0010::5cf2f1f1",
+      "15.SupportoAmministrazione.pdf::0008::1059b287"
+    ],
+    "context": "DHCP: cosa fornisce\n• Parametri necessari per accedere ad una rete\n– Indirizzo IP\n– Subnet mask\n– Default gateway\n– DNS server (cache resolver)\n• L'indirizzo IP è una risorsa non condivisibile, le \naltre sono informazioni comuni ai partecipanti \nalla sottorete\n\nDHCP: modi di funzionamento\n• Dynamic\n– assegnazione temporanea di un indirizzo con \nscadenza\n– caso comune per accessi \"di passaggio\" (WiFi ma \nnon solo) o per rotazione di insieme di indirizzi \nlimitato tra molti client\n\n---\n\nConfigurazione dispositivi\nper l'accesso alla rete\n• DHCP: Dynamic Host Configuration Protocol\n• Fornitura parametri di configurazione ai \ndispositivi che si connettono ad una rete\n• Impensabile lavoro manuale a carico \ndell'amministratore (aggiornamento, \nassegnazione dinamica, scarsità indirizzi IP)\n• Impensabile affidare la configurazione \nall'utente finale\n\n---\n\nSotto l’IP\nL’architettura TCP/IP non specifica i livelli 1 e 2 (fisico e \ncollegamento), ma utilizza quelli normalmente disponibili e \nconformi agli standard. \nE’ quindi possibile sfruttare reti preesistenti, ad esempio: \n•\nreti locali: Ethernet/IEEE802.3, Token-Ring, FDDI \n•\nreti geografiche: HDLC, PPP, SLIP, X.25, Frame Relay, \nSMDS, ATM\n\n---\n\nSotto l’IP\nL’architettura TCP/IP non specifica i livelli 1 e 2 (fisico e \ncollegamento), ma utilizza quelli normalmente disponibili e \nconformi agli standard. \nE’ quindi possibile sfruttare reti preesistenti, ad esempio: \n•\nreti locali: Ethernet/IEEE802.3, Token-Ring, FDDI \n•\nreti geografiche: HDLC, PPP, SLIP, X.25, Frame Relay, \nSMDS, ATM\n\n---\n\nRichiesta di indirizzo già avuto\n\nDHCP server ovunque?\n• La richiesta essendo broadcast non può \nsuperare il broadcast domain\n• Se una rete aziendale è composta da più \nsottoreti serve un DHCP server su ognuna ?\n• Bootp relay: intermediario su ogni broadcast \ndomain che gira le richieste a uno (o più) \nserver DHCP e restituisce le risposte\nbootpoot",
+    "answer": "In base al contesto fornito, DHCP fornisce i seguenti parametri necessari per accedere ad una rete:\n- Indirizzo IP\n- Subnet mask\n- Default gateway\n- DNS server (cache resolver)\n\nIl contesto specifica inoltre che l'indirizzo IP è una risorsa non condivisibile, mentre le altre informazioni sono comuni ai partecipanti della sottorete.",
+    "latency_s": 1.56
+  },
+  {
+    "id": "s02",
+    "kind": "direct",
+    "topic": "Reti - DNS",
+    "query": "Il servizio DNS usa TCP o UDP nella pratica e perche?",
+    "expected_answer": "DNS puo usare sia TCP sia UDP, ma nella pratica usa quasi sempre UDP perche e piu veloce e semplice per le interrogazioni ordinarie.",
+    "status": "answered",
+    "min_distance": 0.23537731170654297,
+    "retrieved_ids": [
+      "10.ServiziNaming.pdf::0024::10e24425",
+      "PAJC_L09_J_Neworks.pdf::0013::95e4964b",
+      "PAJC_L09_J_Neworks_(2).pdf::0013::95e4964b",
+      "PAJC_L09_J_Neworks_(2).pdf::0012::1cbba6cd",
+      "PAJC_L09_J_Neworks.pdf::0012::1cbba6cd"
+    ],
+    "context": "DNS: TCP o UDP ?\n• Possibili entrambi ma in pratica si usa sempre\n• UDP!\npiùveloce e\nsemplice\n\n---\n\nTCP vs UDP\nUDP (User Datagram Protocol) permette di trasmettere pacchetti \nindipendenti di informazioni (datagram) senza garanzie di ricezione. \nA differenza del TCP non è basato su una connessione client-server\nServizi tipicamente di trasmissione informazioni semplici: ping, orario, \n…\n\nAccesso alle risorse di rete\nURL & co.\n\n---\n\nTCP vs UDP\nUDP (User Datagram Protocol) permette di trasmettere pacchetti \nindipendenti di informazioni (datagram) senza garanzie di ricezione. \nA differenza del TCP non è basato su una connessione client-server\nServizi tipicamente di trasmissione informazioni semplici: ping, orario, \n…\n\nAccesso alle risorse di rete\nURL & co.\n\n---\n\ncomunicazione in \nrete secondo Java\n\nTCP vs UDP\nTCP (Transmission Control Protocol) permette di \ninstaurare una connessione client-server con \ncomunicazione afﬁdabile dei dati\nServizi tipicamente di trasmissione informazioni \ncomplesse: FTP, HTTP, POP, SMTP\n\n---\n\ncomunicazione in \nrete secondo Java\n\nTCP vs UDP\nTCP (Transmission Control Protocol) permette di \ninstaurare una connessione client-server con \ncomunicazione afﬁdabile dei dati\nServizi tipicamente di trasmissione informazioni \ncomplesse: FTP, HTTP, POP, SMTP",
+    "answer": "Nel contesto fornito, per il DNS si afferma: \"Possibili entrambi ma in pratica si usa sempre UDP! più veloce e semplice\".",
+    "latency_s": 1.43
+  },
+  {
+    "id": "s03",
+    "kind": "direct",
+    "topic": "Sistemi fault tolerant - heartbeat",
+    "query": "Che cos e un meccanismo di heartbeat in un cluster e quando attiva il failover?",
+    "expected_answer": "Un heartbeat e un controllo periodico, un battito, usato per verificare che un nodo o servizio risponda. Se il battito non arriva entro una scadenza prefissata, il sistema considera il nodo guasto o non raggiungibile e avvia il failover.",
+    "status": "answered",
+    "min_distance": 0.35937970876693726,
+    "retrieved_ids": [
+      "ClusterFaultTolSisOp.pdf::0016::7f53df26",
+      "7.1ClusterFaultTolSisOp.pdf::0016::7f53df26",
+      "ClusterFaultTolSisOp.pdf::0022::b19b6eb1",
+      "7.1ClusterFaultTolSisOp.pdf::0022::b19b6eb1",
+      "7.1ClusterFaultTolSisOp.pdf::0010::df83d8c4"
+    ],
+    "context": "Monitoraggio e failover LB\nNow the load balancer might become a single failure point of \nthe whole system. In order to prevent the whole system from \nbeing out of service because of the load balancer failure, we\nneed setup a backup (or several backups) of the load balancer. \nTwo heartbeat daemons run on the primary and the backup \nrespectively, they heartbeat the message like \"I'm alive\" each\nother through serial lines and/or network interfaces\nperiodically. When the heartbeat daemon of the backup\n\n---\n\nMonitoraggio e failover LB\nNow the load balancer might become a single failure point of \nthe whole system. In order to prevent the whole system from \nbeing out of service because of the load balancer failure, we\nneed setup a backup (or several backups) of the load balancer. \nTwo heartbeat daemons run on the primary and the backup \nrespectively, they heartbeat the message like \"I'm alive\" each\nother through serial lines and/or network interfaces\nperiodically. When the heartbeat daemon of the backup\n\n---\n\nSistemi operativi per cluster\n• La mappa verrà aggiornata in base a:\n– monitoraggio/heartbeat\n– eventi segnalati dai nodi stessi\n• Update globale da gestire\n– coordinatore o meccanismo distribuito \n– possibili race conditions\n• Possibili conseguenze degli eventi\n– failover su risorse a seguito di cadute\n– failback a seguito di ripristino\n\n---\n\nSistemi operativi per cluster\n• La mappa verrà aggiornata in base a:\n– monitoraggio/heartbeat\n– eventi segnalati dai nodi stessi\n• Update globale da gestire\n– coordinatore o meccanismo distribuito \n– possibili race conditions\n• Possibili conseguenze degli eventi\n– failover su risorse a seguito di cadute\n– failback a seguito di ripristino\n\n---\n\nHeartbeat\n• Si verifica periodicamente qualche forma di \n\"battito\" e se manca si interviene\n• Problema real-time\n– si fissa una scadenza per la ricezione del battito\n– se non arriva entro la scadenza si avvia il failover\n• Ma le reti locali e Internet non sono real-time\n– falsi allarmi: se scadenza troppo stretta confondo \n\"normali\" ritardi con guasti\n– scarsa prontezza: se scadenza troppo larga il \ndisservizio viene rilevato tardivamente",
+    "answer": "In base al contesto fornito, il meccanismo di heartbeat in un cluster è una forma di \"battito\" periodico che si verifica tra i nodi (ad esempio, tra il load balancer primario e il backup). Due demoni heartbeat eseguono sui nodi primario e di backup, scambiandosi messaggi come \"I'm alive\" attraverso linee seriali o interfacce di rete.\n\nIl failover viene attivato quando il battito non arriva entro una scadenza fissata. Il contesto specifica: \"si fissa una scadenza per la ricezione del battito – se non arriva entro la scadenza si avvia il failover\".",
+    "latency_s": 2.42
+  },
+  {
+    "id": "s04",
+    "kind": "complex",
+    "topic": "Architetture multiprocessore - deadlock",
+    "query": "Spiega perche nei sistemi multiprocessore scalabili un buffer unico per richieste e risposte puo portare a deadlock e qual e la soluzione generale proposta.",
+    "expected_answer": "Se richieste e risposte condividono lo stesso buffer, il sistema puo riempirsi di messaggi in attesa e bloccare le risposte necessarie a liberare spazio, creando deadlock. La soluzione generale consiste nel separare il buffer di uscita tra richieste e risposte, evitando che un tipo di messaggio blocchi l altro.",
+    "status": "answered",
+    "min_distance": 0.3171190023422241,
+    "retrieved_ids": [
+      "7.MultiprocessingScalabile.pdf::0016::668cbdb1",
+      "2.4.MultiprocessingScalabile.pdf::0017::668cbdb1",
+      "2.4.MultiprocessingScalabile.pdf::0014::674df016",
+      "7.MultiprocessingScalabile.pdf::0000::031743fc",
+      "2.4.MultiprocessingScalabile.pdf::0000::031743fc"
+    ],
+    "context": "Una soluzione generale\n• E' stato dimostrato che separando il buffer di \nuscita tra richieste e risposte si evita il verificarsi \ndi deadlock …\n• … purchè il protocollo utilizzato sia di tipo \"strict\nrequest-response\"\n• Ovvero ad ogni richiesta segue immediatamente \nla relativa risposta\n• Anche se sembra naturale è una restrizione forte\n• Se non si usa la soluzione generale va garantita \nl'assenza di deadlock studiandola nel caso \nspecifico\n\n---\n\nUna soluzione generale\n• E' stato dimostrato che separando il buffer di \nuscita tra richieste e risposte si evita il verificarsi \ndi deadlock …\n• … purchè il protocollo utilizzato sia di tipo \"strict\nrequest-response\"\n• Ovvero ad ogni richiesta segue immediatamente \nla relativa risposta\n• Anche se sembra naturale è una restrizione forte\n• Se non si usa la soluzione generale va garantita \nl'assenza di deadlock studiandola nel caso \nspecifico\n\n---\n\nUn'insidia pericolosa\nU.F.\nC.A.\nBuffer\n• Nel buffer si metteranno:\n– richieste inviate, in attesa \ndi ricevere risposta\n– richieste ricevute, in \nattesa di inviare risposta\n– risposte inviate, in attesa \ndi conferma di poterle \ncancellare\n• Nel seguito si ipotizza \nbuffer di capacità 1 per \nsemplicità\nbufferpieni possono\ncausare deadlockparalieranti\nmmm\n\n---\n\nMultiprocessing scalabile: \nconcetti generali\nLezione sostitutiva di didattica in presenza\nImpianti Informatici\nP. Baroni\n \n\nObiettivi di scalabilità\n• Eliminare vincoli all'aumento del numero di \nprocessori\n• Bandwidth tra processori e memoria\n– deve aumentare all'aumentare del numero di \nprocessori\n– interconnect non deve essere collo di bottiglia\n• Latency\n– i ritardi di comunicazione non aumentano (troppo) \ncon l'aumentare del numero di processori\n– accesso al mezzo, instradamento, tempo in rete\n\n---\n\nMultiprocessing scalabile: \nconcetti generali\nLezione sostitutiva di didattica in presenza\nImpianti Informatici\nP. Baroni\n \n\nObiettivi di scalabilità\n• Eliminare vincoli all'aumento del numero di \nprocessori\n• Bandwidth tra processori e memoria\n– deve aumentare all'aumentare del numero di \nprocessori\n– interconnect non deve essere collo di bottiglia\n• Latency\n– i ritardi di comunicazione non aumentano (troppo) \ncon l'aumentare del numero di processori\n– accesso al mezzo, instradamento, tempo in rete",
+    "answer": "Nel contesto fornito, si spiega che un buffer unico per richieste e risposte può portare a deadlock perché nel buffer vengono messi diversi tipi di messaggi: richieste inviate in attesa di risposta, richieste ricevute in attesa di inviare risposta, e risposte inviate in attesa di conferma di cancellazione. Se il buffer si riempie (ad esempio, con capacità 1), può causare deadlock.\n\nLa soluzione generale proposta è **separare il buffer di uscita tra richieste e risposte**, a condizione che il protocollo utilizzato sia di tipo \"strict request-response\", ovvero che a ogni richiesta segua immediatamente la relativa risposta. Il contesto sottolinea che questa è una restrizione forte e che, se non si adotta questa soluzione, l'assenza di deadlock va garantita studiando il caso specifico.",
+    "latency_s": 2.98
+  },
+  {
+    "id": "s05",
+    "kind": "complex",
+    "topic": "Reti sequenziali - Moore/Mealy",
+    "query": "Confronta il modello di Moore e il modello di Mealy usando l esempio del controllore di un semaforo.",
+    "expected_answer": "Nel modello di Moore l uscita dipende dallo stato corrente: per il semaforo gli stati Verde/Rosso determinano LuceVerde 1/0 e il cambio avviene al ciclo di clock successivo. Nel modello di Mealy l uscita dipende da stato e ingressi, quindi le transizioni sono etichettate ingresso/uscita e permettono una descrizione equivalente ma piu legata agli input presenti.",
+    "status": "answered",
+    "min_distance": 0.29395294189453125,
+    "retrieved_ids": [
+      "L05_RetiSequenziali.pdf::0021::20217c80",
+      "L05_RetiSequenziali.pdf::0063::ee345516",
+      "CALCOL[21-06a]_15.06.21.pdf::0002::98e0c382",
+      "CALCOL[20-07]_13.07.20.pdf::0001::79951f2c",
+      "L05_RetiSequenziali.pdf::0068::cd627f86"
+    ],
+    "context": "Due modelli: Moore vs. Mealy\n• Nel modello di Moore le uscite dipendono solo dallo stato corrente,\nnel modello di Mealy le uscite dipendono anche dagli ingressi\nAutoma struttura chedescrive il\ncomportamento di\nuna\nrete sequenziale\nµfu m.come di 1reunion one\nCandicelostatofuturo\nfummo e\nin\ncita\nsindaco il valored'uscita\nOmega\nciha\nIEI\nÈ\nL\ndi se I\nSi distingue se 5che è\nuno stato specificodi S\nchiamato stato iniziale XDindica il sistema alpuntodi partenza\n\n---\n\nDue modelli: Moore vs. Mealy\n• Nel modello di Moore le uscite dipendono solo dallo stato corrente,\nnel modello di Mealy le uscite dipendono anche dagli ingressi\n\n---\n\nclock, per produrre i segnali corretti in uscita dell’Unità di Controllo).  \n   \n \n  [2] \n \nD\nD MEALY\nstT\nt'fumauscita\nFUT\nNell'automa di Mealy le uscite dipendono dallo stato\ncorrente\ne dall'ingresso\nmentre nell'automa\ndi\nMoore solo dallo stato corrente\na perché le uscite del sistema di controllo dipendono\nsolo dallo\nstato corrente\ne\nnon\ndagli ingressi\n\n---\n\nQual è il motivo per cui l’unità di controllo del processore multiciclo viene progettata come \nmacchina di Moore invece che come macchina di Mealy? (Dare la spiegazione più precisa \npossibile). \n \n \n   \n \n \n \n \n \n \n              [2]\n \n              \n2. \nSi considerino il datapath ed il diagramma a stati finiti che specifica l’unità di controllo \nsecondo la tecnica a multiciclo relativamente alle istruzioni MIPS lw, sw, beq, j ed alle\n\n---\n\n21\n• Gli automi di Mealy hanno, per ogni arco, un simbolo di entrata \ne uno di uscita\n• Negli automi di Moore l’uscita è invece già codificata nel \nvalore dello stato in cui si trova la macchina, ovvero la funzione \ndi uscita dipende solo da S anziché da I x S\n• E’ possibile trasformare una macchina di Mealy in una di Moore \ne viceversa, solitamente quelle di Moore hanno più stati (ma \nsono “più veloci” – vedremo quando parleremo del controllo \nnella CPU)",
+    "answer": "Non ho questa informazione nel contesto fornito. Il contesto descrive le differenze generali tra i modelli di Moore e Mealy (ad esempio, \"nel modello di Moore le uscite dipendono solo dallo stato corrente, nel modello di Mealy le uscite dipendono anche dagli ingressi\"), ma non fornisce un esempio specifico relativo al controllore di un semaforo.",
+    "latency_s": 1.58
+  }
+]

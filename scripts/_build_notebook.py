@@ -67,6 +67,8 @@ _root = os.path.dirname(os.path.abspath('__file__'))
 if _root not in sys.path:
     sys.path.insert(0, _root)
 
+os.makedirs('images', exist_ok=True)
+
 # Ricarica tutti i moduli src: evita la cache tra sessioni o dopo modifiche ai file
 import src.config, src.metrics, src.embeddings, src.retrieval, src.pipeline, src.judge
 for _m in [src.config, src.metrics, src.embeddings, src.retrieval, src.pipeline, src.judge]:
@@ -235,7 +237,7 @@ for ax, metric in zip(axes, ['Hit@k', 'MRR', 'Recall@k']):
     ax.set_title(metric)
 plt.suptitle('Exp A — Retrieval per strategia × top-k', fontsize=13)
 plt.tight_layout()
-plt.savefig('retrieval_id_based.png', dpi=150); plt.show()
+plt.savefig('images/retrieval_id_based.png', dpi=150); plt.show()
 
 # Se BEST_STRATEGY non è in ChromaDB, caricala
 if BEST_STRATEGY not in collections:
@@ -317,7 +319,7 @@ ax.set(ylabel='min cosine distance', title='Distanze per categoria')
 ax.tick_params(axis='x', rotation=20); ax.legend(); ax.grid(True, alpha=0.3, axis='y')
 
 plt.tight_layout()
-plt.savefig('ood_gate_analysis.png', dpi=150); plt.show()\
+plt.savefig('images/ood_gate_analysis.png', dpi=150); plt.show()\
 """),
 
 # ── Sezione 9: Esperimento C ────────────────────────────────────────────
@@ -421,7 +423,7 @@ ax.set(xlabel='alpha (0=BM25, 1=dense)', ylabel='Metrica',
        title='Exp D — Hybrid Search: sweep alpha')
 ax.legend(); ax.grid(True, alpha=0.3)
 plt.tight_layout()
-plt.savefig('hybrid_alpha_sweep.png', dpi=150); plt.show()\
+plt.savefig('images/hybrid_alpha_sweep.png', dpi=150); plt.show()\
 """),
 
 # ── Sezione 11: Pipeline end-to-end ────────────────────────────────────
@@ -733,7 +735,7 @@ if not df_llm.empty:
     ax.set(xlabel='Latenza media (s)', ylabel='(Faith+AR)/2', title='Trade-off qualità vs velocità')
     ax.grid(True, alpha=0.3)
     plt.tight_layout()
-    plt.savefig('multi_llm_comparison.png', dpi=150); plt.show()\
+    plt.savefig('images/multi_llm_comparison.png', dpi=150); plt.show()\
 """),
 
 # ── Sezione 16: Robustezza ──────────────────────────────────────────────
@@ -800,6 +802,99 @@ print(f'  Generatore: {cfg.GENERATOR_MODEL}  [{cfg.GENERATOR_BACKEND}]')
 print(f'  Giudice:    {cfg.JUDGE_MODEL}  [{cfg.JUDGE_BACKEND}]')\
 """),
 
+# ── Sezione 18: Sanity holdout ──────────────────────────────────────────
+md("""\
+## Sezione 18 — Sanity Check Holdout Qualitativo
+
+Cinque domande in-domain non incluse nel Gold Set (3 dirette e 2 complesse).
+Questa sezione non aggiorna le metriche ufficiali: serve solo come confronto
+visivo post-hoc tra risposta attesa, contesto recuperato e risposta generata.\
+"""),
+
+code("""\
+from src.pipeline import rag_pipeline
+
+SANITY_RESULTS_PATH = os.path.join(cfg.CHECKPOINT_DIR, 'sanity_holdout_results.json')
+
+SANITY_QUERIES = [
+    {
+        'id': 's01', 'kind': 'direct', 'topic': 'Reti - DHCP',
+        'query': 'Quali parametri di rete fornisce DHCP a un dispositivo che si collega a una sottorete?',
+        'expected_answer': 'DHCP fornisce indirizzo IP, subnet mask, default gateway e DNS server/cache resolver.',
+    },
+    {
+        'id': 's02', 'kind': 'direct', 'topic': 'Reti - DNS',
+        'query': 'Il servizio DNS usa TCP o UDP nella pratica e perche?',
+        'expected_answer': 'DNS puo usare sia TCP sia UDP, ma nella pratica usa quasi sempre UDP perche e piu veloce e semplice.',
+    },
+    {
+        'id': 's03', 'kind': 'direct', 'topic': 'Sistemi fault tolerant - heartbeat',
+        'query': 'Che cos e un meccanismo di heartbeat in un cluster e quando attiva il failover?',
+        'expected_answer': 'Un heartbeat e un battito periodico: se non arriva entro una scadenza, si considera il nodo guasto e si avvia il failover.',
+    },
+    {
+        'id': 's04', 'kind': 'complex', 'topic': 'Architetture multiprocessore - deadlock',
+        'query': 'Spiega perche nei sistemi multiprocessore scalabili un buffer unico per richieste e risposte puo portare a deadlock e qual e la soluzione generale proposta?',
+        'expected_answer': 'Un buffer unico puo riempirsi e bloccare le risposte necessarie a liberare spazio; la soluzione e separare buffer di richieste e risposte.',
+    },
+    {
+        'id': 's05', 'kind': 'complex', 'topic': 'Reti sequenziali - Moore/Mealy',
+        'query': 'Confronta il modello di Moore e il modello di Mealy usando l esempio del controllore di un semaforo.',
+        'expected_answer': 'In Moore l uscita dipende dallo stato; in Mealy dipende da stato e ingressi. Nel semaforo Verde/Rosso determinano o accompagnano LuceVerde.',
+    },
+]
+
+if os.path.exists(SANITY_RESULTS_PATH):
+    with open(SANITY_RESULTS_PATH, 'r', encoding='utf-8') as f:
+        sanity_records = json.load(f)
+    print(f'[CHECKPOINT] Sanity holdout caricato: {len(sanity_records)} record')
+else:
+    sanity_records = []
+    for q in SANITY_QUERIES:
+        out = rag_pipeline(
+            q['query'], components, generator_client, cfg.GENERATOR_MODEL,
+            cfg.OOD_THRESHOLD, cfg.HYBRID_ALPHA,
+            use_rerank=False,
+            generator_backend=cfg.GENERATOR_BACKEND,
+        )
+        sanity_records.append({**q, **out})
+        with open(SANITY_RESULTS_PATH, 'w', encoding='utf-8') as f:
+            json.dump(sanity_records, f, ensure_ascii=False, indent=2)
+
+df_sanity = pd.DataFrame([
+    {
+        'id': r['id'], 'tipo': r['kind'], 'topic': r['topic'],
+        'status': r['status'],
+        'min_dist': round(r['min_distance'], 4) if r.get('min_distance') is not None else None,
+        'latency_s': r.get('latency_s'),
+        'expected_preview': r['expected_answer'][:120] + '...',
+        'answer_preview': (r.get('answer') or '')[:120] + '...',
+    }
+    for r in sanity_records
+])
+print(df_sanity.to_string(index=False))\
+"""),
+
+code("""\
+for r in sanity_records:
+    min_d = r.get('min_distance')
+    min_d_txt = f'{min_d:.4f}' if min_d is not None else 'N/A'
+    print('\\n' + '='*90)
+    print(f'[{r["id"]}] {r["topic"]} | {r["kind"]} | status={r["status"]} | min_dist={min_d_txt}')
+    print('\\nDOMANDA')
+    print(r['query'])
+    print('\\nRISPOSTA ATTESA')
+    print(r['expected_answer'])
+    print('\\nRISPOSTA RAG')
+    print(r.get('answer') or '')
+    print('\\nTOP CHUNK RECUPERATI')
+    for i, cid in enumerate(r.get('retrieved_ids', [])[:5], 1):
+        doc = components._docs_by_id.get(cid, '')
+        preview = ' '.join(doc.split())[:500]
+        print(f'  {i}. {cid}')
+        print(f'     {preview}...')\
+"""),
+
 ]  # end cells
 
 for i, cell in enumerate(cells):
@@ -815,7 +910,9 @@ nb = {
     "cells": cells,
 }
 
-out = 'rag_experiment.ipynb'
+import os
+_HERE = os.path.dirname(os.path.abspath(__file__))
+out = os.path.join(_HERE, '..', 'rag_experiment.ipynb')
 with open(out, 'w', encoding='utf-8') as f:
     json.dump(nb, f, ensure_ascii=False, indent=1)
 

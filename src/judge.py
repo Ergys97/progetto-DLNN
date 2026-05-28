@@ -226,7 +226,13 @@ def run_judge_batch(
 
     results: list = list(done.values())
     todo    = [r for r in pipeline_results if r['id'] not in done]
-    print(f'Da valutare: {len(todo)} record (skipped già presenti: {len(done)}).')
+    todo_answered = [r for r in todo if r.get('status') == 'answered']
+    todo_skipped = len(todo) - len(todo_answered)
+    print(
+        f'Da giudicare: {len(todo_answered)} record answered '
+        f'(da registrare come skipped/non valutabili: {todo_skipped}; '
+        f'già presenti: {len(done)}).'
+    )
 
     new_count = 0
     for r in todo:
