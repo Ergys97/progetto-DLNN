@@ -1,12 +1,17 @@
-python-dotenv
-numpy
-openai
-chromadb
-sentence-transformers
-rank-bm25
-pandas
-seaborn
-matplotlib
-scipy
-bert-score
-groq
+# Versioni pinnate per riproducibilità (ambiente di sviluppo dell'autore).
+# Python testato: 3.9–3.11. NB: chromadb, sentence-transformers e bert-score
+# possono cambiare i risultati numerici tra release minori.
+python-dotenv==1.2.2
+numpy==2.4.4
+scipy==1.17.1
+pandas==3.0.1
+matplotlib==3.10.8
+seaborn==0.13.2
+chromadb==1.5.7
+sentence-transformers==5.5.1
+rank-bm25==0.2.2
+bert-score==0.3.12
+langchain-text-splitters==1.1.2
+pymupdf==1.27.2.2
+openai==2.38.0
+groq==1.2.0

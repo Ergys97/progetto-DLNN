@@ -117,6 +117,18 @@ Questa metrica è invariante alla strategia di chunking e misura l'overlap seman
 
 La strategia `recursive_512` si conferma come la scelta di riferimento per gli esperimenti successivi, grazie alla capacità dello splitter ricorsivo di rispettare la struttura logica del testo (paragrafi e intestazioni), riducendo la dispersione informativa.
 
+**Sensibilità alla soglia di Jaccard.** La soglia θ_jac = 0.5 è una scelta arbitraria; per verificare che il ranking delle strategie non sia un suo artefatto, l'Hit@5 testuale è stato ricalcolato su un intervallo di soglie:
+
+| Strategia | θ_jac=0.3 | θ_jac=0.4 | θ_jac=0.5 | θ_jac=0.6 | θ_jac=0.7 |
+|---|---|---|---|---|---|
+| `recursive_512` | **0.971** | **0.971** | **0.971** | **0.971** | **0.971** |
+| `fixed_512` | 0.912 | 0.882 | 0.853 | 0.765 | 0.588 |
+| `fixed_256` | 0.882 | 0.853 | 0.824 | 0.559 | 0.265 |
+| `fixed_1024` | 0.882 | 0.824 | 0.735 | 0.235 | 0.088 |
+| `sentence_5` | 0.676 | 0.471 | 0.412 | 0.235 | 0.176 |
+
+`recursive_512` resta la migliore a **ogni** soglia e l'ordinamento complessivo è stabile: la conclusione di Exp A non dipende dalla scelta di 0.5. Va però osservato — onestamente — che l'Hit@5 di `recursive_512` è *invariante* alla soglia (0.971 ovunque) **proprio perché i testi attesi sono chunk di `recursive_512`**: un chunk recuperato che coincide con quello atteso ha Jaccard ≈ 1.0 e supera qualunque soglia. Questo è il vantaggio di casa residuo della strategia di riferimento (§3): le altre strategie degradano all'aumentare della soglia perché i loro confini producono solo un overlap *parziale* con i testi annotati. La metrica Jaccard rimuove la tautologia degli ID disgiunti ma non azzera del tutto il bias di annotazione. Dati in `checkpoint/exp_a_jaccard_sensitivity.json` (`python scripts/run_jaccard_sensitivity.py`).
+
 **Scelta della strategia di riferimento:** `recursive_512` per tutti gli esperimenti successivi.
 
 ---
@@ -158,6 +170,27 @@ Sebbene il gate separi ottimamente la quasi totalità delle query, **cinque quer
 
 Inoltre, la correzione sistematica del Gold Set ha permesso di riclassificare correttamente la query **`q21`** (chimica) come in-domain, fornendole gli appropriati chunk di riferimento. La query ha registrato una distanza minima di 0.3863, superando regolarmente il gate e confermando che una corretta qualità dei dati di test azzera le anomalie di recupero.
 
+**Validazione su holdout (generalizzazione di θ).** La soglia θ=0.40 è stata scelta massimizzando l'indice di Youden *sulle stesse query del gold set* usate poi per la valutazione: c'è quindi un rischio di overfitting del parametro. Per misurare la generalizzazione, è stato costruito un **test set di holdout di 18 query completamente nuove** (10 in-domain su materie ben coperte, 6 out-of-domain, 2 prompt injection), **mai usate durante il tuning** di θ. La `min_distance` è calcolata in modo esatto e deterministico via numpy sugli embeddings del corpus pre-calcolati (`recursive_512`), aggirando la variabilità HNSW di §2.2. Risultati a θ=0.40:
+
+| Classe | N | Bloccate (refused_ood) | Esito |
+|---|---|---|---|
+| In-domain (deve passare) | 10 | 1 (`h08`) | **FPR = 10.0%** |
+| Out-of-domain + prompt injection (deve bloccare) | 8 | 8 | **TPR = 100.0%** |
+
+La separazione è netta: tutte le in-domain tranne `h08` hanno min_dist ≤ 0.38, tutte le query da bloccare hanno min_dist ≥ 0.461; la fascia di confine [0.40, 0.46] contiene solo l'unico falso positivo (`h08`, "indice in un database", min_dist = 0.4282 — concetto poco coperto nel corpus di Basi di dati) e le due prompt injection. **Su dati mai visti, θ=0.40 generalizza con TPR 100% / FPR 10%, leggermente migliore del gold set (93.8% / 14.7%)**, indicando che la scelta della soglia non è un artefatto di overfitting. Dati in `checkpoint/holdout_ood_results.json`, riproducibili con `python scripts/run_holdout_ood.py`.
+
+**Holdout di retrieval (Hit@5 / MRR / Recall su query nuove).** Le 10 query in-domain di holdout sono state poi annotate con i `expected_chunk_ids` (sulla strategia `recursive_512`, valutazione ID-based esatta come §4.3) e usate per misurare le metriche di retrieval su dati mai visti. La query `h08` è stata **esclusa**: ispezionando i top-20 chunk, il corpus non contiene materiale sugli indici di database e sulle prestazioni delle query — la stessa `h08` che il gate aveva segnalato come falso positivo borderline (0.4282) si rivela quindi genuinamente fuori-copertura, il che giustifica a posteriori la diffidenza del gate. Sulle restanti **n=9** query (bootstrap appaiato, B=10 000, seed=42):
+
+| Metrica | Holdout (mai viste) [95% CI] | Gold set (Exp C, n=34) |
+|---|---|---|
+| Hit@5 | **1.000** [1.000, 1.000] | 0.912 |
+| MRR | **0.667** [0.463, 0.870] | 0.775 |
+| Recall@5 | **0.741** [0.537, 0.926] | 0.881 |
+
+Su query mai viste il retriever recupera **almeno un chunk rilevante nel top-5 in tutti i casi** (Hit@5 = 1.000), confermando la generalizzazione. L'MRR (0.667) e il Recall@5 (0.741) sono invece un po' inferiori al gold set: su alcune query (`h03`, `h04`, `h07`, `h10`) il chunk-risposta migliore è recuperato ma più in basso nel ranking, spesso perché chunk-titolo di slide o esercizi affollano le prime posizioni. Gli intervalli di confidenza sono larghi (n=9), quindi il confronto è indicativo, non conclusivo. Dati in `checkpoint/holdout_retrieval_results.json` (`python scripts/run_holdout_retrieval.py eval`).
+
+> **Nota su provenienza e bias.** Il test set di holdout (query e annotazioni `expected_chunk_ids`) è stato definito e verificato dall'autore. **Non vi è bias di auto-valutazione né circolarità**: l'annotatore è indipendente sia dal modello di retrieval valutato (BGE-M3) sia dal giudice (DeepSeek), quindi l'etichettatura di rilevanza — un giudizio fattuale ("questo chunk contiene la risposta alla domanda?") — non è correlata per costruzione al sistema misurato. Le query restano inoltre **mai usate per il tuning** di θ/α, che è ciò che conta per la generalizzazione. I limiti residui sono di altra natura: **annotatore singolo** (manca quindi l'accordo inter-annotatore, §9) e **n=9** (intervalli di confidenza larghi). Un gold standard pienamente robusto richiederebbe più annotatori indipendenti (vedi §9).
+
 ---
 
 ### 4.3 Esperimento C — Re-ranking con CrossEncoder
@@ -168,17 +201,21 @@ Inoltre, la correzione sistematica del Gold Set ha permesso di riclassificare co
 - Nell'Esperimento A, per confrontare equamente strategie di chunking diverse (che producono universi di ID disgiunti), si è utilizzata la similarità Jaccard testuale tra il testo recuperato e il testo annotato.
 - In questo esperimento, poiché sia la baseline che la pipeline riordinata operano sullo stesso chunking (`recursive_512`), si applica una valutazione **ID-based esatta** (confronto diretto degli hash univoci del chunk atteso rispetto a quelli ritornati). Questo metodo è intrinsecamente più severo e spiega perché la baseline densa presenti valori inferiori rispetto a quelli testuali (Hit@5 di 0.912 rispetto a 0.971).
 
-**Risultati con `BAAI/bge-reranker-v2-m3` (Reranker multilingue):**
+**Risultati con `BAAI/bge-reranker-v2-m3` (Reranker multilingue), con intervalli di confidenza bootstrap (B=10 000 ricampionamenti appaiati, seed=42):**
 
-| Metrica | Baseline (dense) | Cross-Encoder Rerank | Trend |
-|---|---|---|---|
-| **Hit@5** | **0.912** | **0.882** | 🛑 **Degradato (-3.3%)** |
-| **MRR** | **0.775** | **0.761** | 🛑 **Degradato (-1.8%)** |
-| **Recall@5** | **0.881** | **0.830** | 🛑 **Degradato (-5.8%)** |
+| Metrica | Baseline (dense) [95% CI] | Cross-Encoder Rerank [95% CI] | Δ (rerank − baseline) [95% CI] | P(Δ<0) |
+|---|---|---|---|---|
+| **Hit@5** | 0.912 [0.794, 1.000] | 0.882 [0.765, 0.971] | −0.029 [−0.088, 0.000] | 0.64 |
+| **MRR** | 0.776 [0.656, 0.887] | 0.761 [0.633, 0.878] | −0.015 [−0.107, 0.074] | 0.61 |
+| **Recall@5** | 0.882 [0.774, 0.971] | 0.831 [0.713, 0.932] | −0.051 [−0.125, 0.004] | 0.95 |
 
-**Analisi del peggioramento.** A differenza dei test preliminari su 25 query (dove il baseline era saturo a Hit@5=1.0), il test su 34 query rivela che il reranker multilingue introduce una **degradazione sistematica**. 
+**Analisi.** Su tutte e tre le metriche il reranker mostra una differenza media **negativa ma non statisticamente significativa**: l'intervallo di confidenza al 95% sulla differenza appaiata include lo zero in ogni caso (Hit@5 e MRR ampiamente, Recall@5 al limite con P(Δ<0)=0.95). In altre parole, con n=34 query non si può affermare che il reranker *peggiori* il sistema in modo statisticamente solido — i test preliminari su 25 query, dove il baseline era saturo a Hit@5=1.0, mascheravano del tutto questa variabilità. Quello che si può affermare con certezza è che **il reranker non porta alcun beneficio misurabile**, aggiungendo però un secondo stadio di inferenza (latenza e costo computazionale).
 
-La causa principale risiede nella sensibilità del CrossEncoder alla similarità lessicale delle formule e dei simboli matematici. In query come **`q37`**, il reranker spinge verso il basso il chunk corretto (da posizione 2 a fuori dal top-5) a favore di altri chunk che contengono formule simili (prodotto scalare) ma semanticamente scorretti per la domanda specifica. **Si raccomanda di mantenere il reranker disabilitato o opzionale.**
+Il segnale qualitativo è comunque coerente: il CrossEncoder appare sensibile alla similarità lessicale di formule e simboli matematici. In query come **`q37`**, il reranker spinge il chunk corretto fuori dal top-5 a favore di chunk con formule simili (prodotto scalare) ma semanticamente scorretti. *L'ipotesi alternativa del troncamento è stata esclusa:* `bge-reranker-v2-m3` ha `max_length` = 8192 token, mentre i chunk di `recursive_512` raggiungono al massimo ~419 token (coppia query+chunk ~444 token, lo 0% supera anche solo 512 token). Nessun input viene quindi troncato e l'effetto, per quanto statisticamente non significativo, non è imputabile alla perdita di contesto.
+
+**Raccomandazione:** mantenere il reranker **disabilitato** non perché provatamente dannoso, ma per il principio di parsimonia — uno stadio che non migliora le metriche e aggiunge latenza/costo non è giustificato su questo corpus.
+
+*Provenienza:* i dati per-query sono in `checkpoint/exp_c_rerank.json`; i valori di bootstrap (IC e P(Δ<0)) sono salvati in `checkpoint/exp_c_bootstrap.json` e ricalcolabili dal notebook (Sezione 9, cella bootstrap).
 
 ---
 
@@ -248,10 +285,12 @@ I dettagli e il testo completo delle risposte e dei contesti sono memorizzati in
 
 | Dimensione | ρ | p-value | Interpretazione |
 |---|---|---|---|
-| Faithfulness | 1.000 | <0.001 | Accordo perfetto sul subset annotato |
-| Answer Relevance | 0.934 | <0.001 | Alto accordo sul subset annotato |
+| Faithfulness | 1.000 | <0.001 | Concordanza sui casi discriminanti, ma potere statistico limitato (vedi nota) |
+| Answer Relevance | 0.934 | <0.001 | Alto accordo su scala dispersa — risultato realmente informativo |
 
-**Analisi.** Sul subset annotato, il giudice `deepseek-v4-pro` risulta fortemente allineato alla valutazione umana. La Faithfulness raggiunge ρ=1.000: giudice e valutatore umano assegnano lo stesso punteggio per tutti i 29 record (entrambi assegnano 5 alla quasi totalità delle risposte, con le stesse eccezioni a 4 per q12, q43, q46). L'Answer Relevance ha ρ=0.934, con il giudice sistematicamente leggermente più severo della valutazione umana (3.45 vs 3.66): in alcuni casi dove il contesto recuperato contiene l'informazione ma non la sviluppa completamente, il giudice penalizza l'AR più dell'umano di un punto (es. q10, q11, q21, q46). Questi valori non dimostrano che il judge sia universalmente affidabile, ma che è coerente con l'annotazione umana in questa configurazione sperimentale.
+**Analisi.** Sul subset annotato, il giudice `deepseek-v4-pro` risulta allineato alla valutazione umana. **La ρ=1.000 sulla Faithfulness va però letta con cautela e non come "accordo perfetto":** la variabile Faithfulness è quasi degenere — 26 dei 29 record valgono 5 sia per l'umano sia per il giudice, e le sole 3 eccezioni (q12, q43, q46) valgono 4 in entrambi. Spearman su una variabile con due soli livelli e ties massicci raggiunge facilmente 1.000, ma ha **potere discriminante quasi nullo**. È lo stesso identico problema di bassa varianza per cui, poco sotto, scartiamo BERTScore: per coerenza metodologica va riconosciuto anche qui. La Faithfulness ρ=1.000 dice solo che giudice e umano *concordano sui pochissimi casi non saturi*, non che il giudice sia uno stimatore affidabile della fedeltà in generale.
+
+Il dato realmente informativo è **l'Answer Relevance (ρ=0.934)**, misurata su una scala molto più dispersa (range 1–5 effettivamente popolato, vedi `manual_eval.json`): qui la correlazione alta ha significato statistico reale. Il giudice è sistematicamente un po' più severo dell'umano (media 3.45 vs 3.66) e in alcuni casi dove il contesto contiene l'informazione ma non la sviluppa penalizza l'AR di un punto in più (es. q10, q11, q21, q46). Nel complesso, questi valori indicano che il judge è coerente con l'annotazione umana in questa configurazione sperimentale — non che sia universalmente affidabile.
 
 **Nota sul run precedente (Gemma 4B locale).** Un run preliminare con Gemma 4B (Ollama) come generatore e solo 15 query aveva mostrato ρ_F=0.206 (non significativo) e ρ_AR=0.040. Quella correlazione bassa era un artefatto strutturale: le valutazioni manuali erano state compilate sulle risposte di Gemma, mentre il giudice LLM valutava successivamente le risposte di un generatore diverso (DeepSeek). Il disallineamento tra risposta-da-valutare e risposta-di-riferimento delle annotazioni azzerava la correlazione. Con il cambio a DeepSeek V4 Flash come generatore definitivo — e il re-labeling manuale delle 29 risposte effettivamente prodotte — il giudice risulta molto più coerente con il valutatore umano.
 
@@ -276,26 +315,34 @@ BERTScore misura la sovrapposizione semantica token-level tra risposta e ground 
 
 ### 5.3 Esperimento F — Confronto Multi-LLM
 
-**Setup.** A parità di pipeline (gate OOD θ=0.40 + hybrid α=1.0 + CrossEncoder disabilitato), confronto di quattro modelli generatori su 34 query in-domain (29 risposte effettive, 5 refused_ood dal gate).
+**Setup.** A parità di pipeline (gate OOD θ=0.40 + hybrid α=1.0 + CrossEncoder disabilitato), confronto di sei modelli generatori su 34 query in-domain.
 
 | Modello | Backend | F̄ | ĀR | (F+AR)/2 | Lat. media | n |
 |---|---|---|---|---|---|---|
 | **DeepSeek V4 Flash** | DeepSeek API | **4.90** | 3.48 | **4.19** | 1.79s | 29 |
-| Llama 3.3 70B Versatile | Groq API | 4.03 | **3.93** | 3.98 | **1.03s** | 29 |
+| Llama 3.3 70B Versatile | Groq API | 4.03 | 3.93 | 3.98 | **1.03s** | 29 |
+| Qwen 2.5 14B (locale) | Ollama CPU | 4.24 | 4.07 | 4.16 | 12.51s | 29 |
+| Granite 4.1 8b (locale) | Ollama CPU | 4.03 | **4.27** | 4.15 | 12.45s | 30* |
 | Gemma 4 2B (locale) | Ollama CPU | 4.69 | 3.14 | 3.91 | 8.21s | 29 |
 | Gemma 4 4B (locale) | Ollama CPU | 4.55 | 3.07 | 3.81 | 12.27s | 29 |
+
+*\*Nota: Granite ha risposto a 30 query invece di 29 in quanto durante la sua sessione la query q01 (Armstrong) ha registrato una distanza minima leggermente inferiore alla soglia di 0.40, superando eccezionalmente il gate OOD a causa della variabilità numerica dell'indice HNSW (dettagli in §2.2).*
 
 **Osservazioni principali:**
 
 1. **DeepSeek V4 Flash** ottiene la Faithfulness più alta (4.90) e il miglior punteggio combinato (F+AR)/2 = 4.19. Il sistema prompt che disabilita la modalità thinking riduce la latenza a ~1.8s mantenendo altissima aderenza al contesto.
 
-2. **Llama 3.3 70B (Groq)** ha la latenza API più bassa (1.03s) e la migliore Answer Relevance (3.93), ma la Faithfulness più bassa (4.03): il modello di grande taglia tende ad aggiungere conoscenza parametrica oltre al contesto, allontanandosi leggermente dalle affermazioni direttamente verificabili nel chunk recuperato.
+2. **Qwen 2.5 14B (locale)** si posiziona come il miglior modello locale per bilanciamento complessivo ((F+AR)/2 = 4.16). Mostra un'ottima Answer Relevance (4.07) e una solida aderenza al contesto (F=4.24), con tempi di esecuzione stabili su CPU (~12.5s).
 
-3. **Gemma 4 2B vs 4B.** Il modello 2B supera sorprendentemente il 4B sia su F (4.69 vs 4.55) che su AR (3.14 vs 3.07), con latenza quasi dimezzata (8.2s vs 12.3s). Su corpus tecnico con contesto fornito dal retriever, la capacità aggiuntiva del modello 4B non si traduce in un miglioramento qualitativo misurabile: il retriever riduce il gap di capacità tra le due taglie.
+3. **Granite 4.1 8b (locale)** registra l'**Answer Relevance assoluta più alta (4.27)** dell'intero confronto, superando anche i modelli commerciali su API. La sua Faithfulness (4.03) è allineata a quella di Llama 3.3 70B, riflettendo una propensione all'elaborazione fluida e centrata.
 
-4. **API vs locale.** DeepSeek e Groq offrono latenze di 1–2s contro 8–12s di Ollama su CPU. Per un uso interattivo, i modelli locali risultano impraticabili senza GPU dedicata.
+4. **Llama 3.3 70B (Groq)** ha la latenza API più bassa (1.03s) e un'ottima Answer Relevance (3.93), ma la Faithfulness più bassa (4.03): il modello di grande taglia tende ad aggiungere conoscenza parametrica oltre al contesto, allontanandosi leggermente dalle affermazioni direttamente verificabili nel chunk recuperato.
 
-5. **Variabilità HNSW tra sessioni.** In questa sessione q01 (Armstrong) risulta refused_ood per tutti i modelli (min_dist leggermente > 0.40), mentre q14 (Cut in Prolog) è answered. Questo è l'inverso del pipeline batch principale — conferma la variabilità inter-sessione dell'indice HNSW discussa in §2.2. I 5 refused fissi sono q07, q36, q37, q40 + q01 o q14 in base alla sessione.
+5. **Gemma 4 2B vs 4B.** Il modello 2B supera sorprendentemente il 4B sia su F (4.69 vs 4.55) che su AR (3.14 vs 3.07), con latenza quasi dimezzata (8.2s vs 12.3s). Su corpus tecnico con contesto fornito dal retriever, la capacità aggiuntiva del modello 4B non si traduce in un miglioramento qualitativo misurabile.
+
+6. **API vs locale.** DeepSeek e Groq offrono latenze di 1–2s contro 8–12s di Ollama su CPU. Per un uso interattivo, i modelli locali rimangono lenti senza accelerazione GPU.
+
+7. **Variabilità HNSW tra sessioni.** In base alla sessione e alla rigenerazione dell'indice HNSW in-memory, le query al confine della soglia (como q01 e q14) possono passare o essere bloccate dal gate OOD. Nella sessione di Granite, q01 (Armstrong, dist ≈ 0.39) ha superato il gate, portando n a 30.
 
 ---
 
@@ -355,13 +402,14 @@ I valori di default in `src/config.py` (`OOD_THRESHOLD=0.6`, `HYBRID_ALPHA=0.7`)
 | Esperimento | KPI | Valore | Note |
 |---|---|---|---|
 | A — Chunking | Hit@5 (textual) | 0.971 (recursive_512) | fixed_* tra 0.73–0.85, sentence_5 = 0.412 |
-| B — OOD Gate | TPR / FPR @ $\theta=0.40$ | 93.8% / 14.7% | Youden J = 0.790 |
-| C — Re-ranking | Hit@5 reranker | 0.882 (vs baseline 0.912) | Degradazione dovuta a lexical overlap matematico |
+| B — OOD Gate | TPR / FPR @ $\theta=0.40$ | 93.8% / 14.7% (gold) · 100% / 10% (holdout) | Youden J = 0.790; θ generalizza su 18 query mai viste (§4.2) |
+| Holdout retrieval | Hit@5 / MRR / Recall@5 | 1.000 / 0.667 / 0.741 (n=9) | Query nuove annotate; coerente con gold set (§4.2) |
+| C — Re-ranking | Δ Hit@5 (rerank−baseline) | −0.029 [−0.088, 0.000] | Differenza **non significativa**: reranker non porta benefici (n=34) |
 | D — Hybrid | Hit@5 ($\alpha=1.0$) | 0.912 (vs $\alpha=0.7$ at 0.882) | La componente densa pura è superiore a BM25 |
-| E — Judge F | Spearman $\rho$ (Judge↔Human) | **1.000 (p<0.001)** | Accordo perfetto sul subset annotato (n=29) |
-| E — Judge AR | Spearman $\rho$ (Judge↔Human) | **0.934 (p<0.001)** | Altamente significativo su Answer Relevance |
+| E — Judge F | Spearman $\rho$ (Judge↔Human) | 1.000 (p<0.001) | Variabile quasi degenere (26/29 = 5): potere statistico limitato |
+| E — Judge AR | Spearman $\rho$ (Judge↔Human) | **0.934 (p<0.001)** | Risultato informativo: alto accordo su scala dispersa |
 | E — BERTScore | controllo negativo | ρ=0.095 (n.s.) | Bassa varianza F/AR con DeepSeek → Spearman non discriminante |
-| F — Multi-LLM | (F+AR)/2 migliore | 4.19 (DeepSeek V4 Flash) | Gemma 2B ≈ Gemma 4B; Llama alta AR; DeepSeek alta F |
+| F — Multi-LLM | (F+AR)/2 migliore | 4.19 (DeepSeek V4 Flash) | DeepSeek migliore su F; Granite migliore su AR; Qwen ottimo bilanciamento locale |
 
 ---
 
@@ -371,7 +419,7 @@ I risultati vanno letti come una valutazione sperimentale interna del sistema, n
 
 **Gold set limitato.** Il gold set contiene 50 query, di cui 34 in-domain e 16 tra out-of-domain e prompt injection. È sufficiente per confrontare configurazioni del progetto, ma non per stimare con alta confidenza statistica le prestazioni su tutte le possibili domande universitarie.
 
-**Assenza di test set completamente separato.** Le stesse query sono state usate per scegliere soglia OOD, configurazione di retrieval e valutazione finale. Questo introduce il rischio di overfitting metodologico sul gold set. Una valutazione più rigorosa richiederebbe uno split train/validation/test o una nuova batteria di domande holdout mai usate durante il tuning.
+**Test set separato: parziale ma esteso a retrieval e gate.** Le stesse query del gold set sono state usate per scegliere soglia OOD, configurazione di retrieval e valutazione finale — un rischio di overfitting metodologico. Questo è stato mitigato con un holdout di 18 query mai usate per il tuning (§4.2): per il **gate OOD** (TPR 100% / FPR 10%) e per il **retrieval annotato** (Hit@5 = 1.000, MRR = 0.667, Recall@5 = 0.741 su n=9), entrambi coerenti con il gold set ed entrambi che escludono un overfitting grossolano. **Restano tre limiti onesti:** (1) l'holdout è annotato da un **singolo annotatore** (l'autore), quindi manca la misura di accordo inter-annotatore — si noti però che l'annotatore è indipendente dai modelli valutati (BGE-M3, DeepSeek), per cui *non* si introduce circolarità né auto-valutazione; (2) n=9 query in-domain dà intervalli di confidenza larghi; (3) `α` e la scelta del chunking non sono stati ri-ottimizzati su holdout. Una valutazione pienamente rigorosa richiederebbe uno split train/validation/test fin dall'inizio, con più annotatori indipendenti.
 
 **Annotazione umana singola.** Le metriche del giudice LLM sono confrontate con annotazioni manuali prodotte da un solo valutatore. Manca quindi una misura di accordo inter-annotatore, utile per distinguere gli errori del judge dalle ambiguità naturali della scala 1-5.
 
@@ -381,11 +429,29 @@ I risultati vanno letti come una valutazione sperimentale interna del sistema, n
 
 **Riproducibilità numerica del retrieval.** L'uso di ChromaDB in-memory e la ricostruzione degli indici HNSW introducono piccole variazioni nelle distanze, particolarmente rilevanti per query vicine alla soglia OOD. Per una versione più riproducibile servirebbero indici persistenti, seed e isolamento più rigoroso tra esperimenti.
 
-**Sanity check qualitativo separato.** Il notebook include una sezione finale di holdout con 5 nuove domande in-domain non usate nel gold set (3 dirette e 2 complesse). La sezione è presentata separatamente dalle metriche principali: serve a mostrare esempi qualitativi di generalizzazione, non a ricalcolare le performance ufficiali del sistema.
+**Sanity check qualitativo separato.** Il notebook include una sezione finale di holdout con 5 nuove domande in-domain non usate nel gold set (3 dirette e 2 complesse, `checkpoint/sanity_holdout_results.json`): serve a mostrare esempi qualitativi di generazione, non a ricalcolare le performance ufficiali. A questo si affianca il **holdout quantitativo del gate OOD** (18 query, §4.2), che invece produce metriche TPR/FPR su dati mai visti.
 
 ---
 
-## 10. Conclusioni
+## 10. Lezioni per la Produzione (RAG in Contesto Aziendale)
+
+L'obiettivo dichiarato del progetto non è solo accademico: serve a estrarre principi trasferibili alla costruzione di sistemi RAG per clienti/aziende. Gli esperimenti A–F, letti in quest'ottica, suggeriscono sei lezioni operative.
+
+1. **Il chunking è il primo investimento, non l'embedder.** L'Esperimento A mostra un Hit@5 che varia da 0.41 (`sentence_5`) a 0.97 (`recursive_512`) *a parità di embedder e di tutto il resto*. In un progetto reale, adattare la strategia di segmentazione alla struttura del documento (paragrafi, sezioni, tabelle) rende più che sostituire il modello di embedding. È anche l'intervento più economico.
+
+2. **Più componenti ≠ più qualità: misurare prima di aggiungere stadi.** Reranking e hybrid search sono "best practice" diffuse, ma su questo corpus il reranker non porta benefici misurabili (§4.3) e l'hybrid peggiora rispetto al denso puro (§4.4). Lezione per il cliente: ogni stadio della pipeline va giustificato da un A/B test *sul suo corpus*, non assunto per convenzione. Stadi inutili aggiungono latenza, costo e superficie di errore.
+
+3. **La qualità del dato batte l'algoritmo.** I falsi positivi del gate (OCR corrotto in `q36`, KB incompleta in `q21`) mostrano che il collo di bottiglia non è il retriever ma il **data cleaning** a monte. In un progetto reale l'ingestione e la pulizia dei documenti (OCR, deduplicazione, normalizzazione) sono tipicamente il 60–70% dello sforzo e determinano il tetto di performance.
+
+4. **Il valutatore va validato, e la validazione non si trasferisce.** Il confronto Gemma→DeepSeek (§5.2) dimostra empiricamente che un giudice LLM allineato su un generatore può crollare su un altro: la ρ è una proprietà della *coppia* (giudice, generatore, dominio), non del giudice in sé. In produzione questo impone **eval continua con annotazione fresca** a ogni cambio di modello o dominio, non un giudice "validato una volta per tutte".
+
+5. **Tunare e valutare sullo stesso set è la trappola classica.** Il limite metodologico riconosciuto in §9 (soglia OOD e α scelti sulle stesse query usate per la valutazione) è esattamente l'errore che in produzione genera sistemi che brillano in demo e falliscono sui dati reali del cliente. Un set di holdout mai toccato durante il tuning non è pedanteria accademica: è ciò che distingue una performance dichiarata da una performance reale.
+
+6. **Il vincolo operativo reale è costo/latenza/rate-limit, non l'accuratezza.** L'Esperimento F mostra latenze da 1–2s (API) a 8–12s (locale su CPU) e l'introduzione cita i limiti di token giornalieri delle API gratuite come vero collo di bottiglia. Per un cliente queste sono *le* variabili che decidono l'architettura: un sistema accurato ma con p95 di 12s o con un tetto di richieste giornaliere non è utilizzabile in molti contesti interattivi. Ogni scelta di modello va accompagnata da una stima €/1k query e latenza p95.
+
+---
+
+## 11. Conclusioni
 
 Questo lavoro ha costruito e valutato una pipeline RAG locale su una knowledge base personale, con sei esperimenti che coprono le principali dimensioni del sistema.
 
@@ -393,20 +459,20 @@ Questo lavoro ha costruito e valutato una pipeline RAG locale su una knowledge b
 
 1. **Il retrieval è risolto da BGE-M3 + `recursive_512`.** L'Hit@5 compreso tra il 91.2% (valutazione esatta per ID) e il 97.1% (valutazione Jaccard testuale) rappresenta un risultato eccellente per un corpus tecnico italiano non strutturato. La scelta del chunking si conferma critica: strategie a finestra fissa o basate sul numero di frasi frammentano le formule matematiche e creano contesti privi di coerenza semantica.
 
-2. **Il re-ranking con CrossEncoder degrada le performance.** Sebbene l'accoppiamento BGE-M3 + `bge-reranker-v2-m3` sia multilingue, l'introduzione del reranker a due stadi ha ridotto l'Hit@5 dal 91.2% all'88.2% e il Recall@5 dall'88.1% all'83.0%. Il CrossEncoder mostra un'eccessiva sensibilità alla similarità sintattica generica di equazioni e simboli matematici, spingendo i chunk specifici e corretti al di sotto del top-5.
+2. **Il re-ranking con CrossEncoder non porta benefici (e non va aggiunto).** L'introduzione del reranker a due stadi `bge-reranker-v2-m3` produce una differenza media negativa su tutte le metriche (Hit@5 −0.029, MRR −0.015, Recall@5 −0.051), ma il bootstrap appaiato (n=34, B=10 000) mostra che **nessuna di queste differenze è statisticamente significativa**: tutti gli intervalli di confidenza al 95% includono lo zero. La conclusione corretta non è quindi "il reranker degrada" ma "il reranker non migliora": uno stadio che non sposta le metriche in modo misurabile e aggiunge latenza/costo va escluso per parsimonia. Il segnale qualitativo (sensibilità all'overlap lessicale di formule matematiche, es. `q37`) resta plausibile ma non isolato dal possibile effetto di troncamento degli input.
 
 3. **La ricerca densa pura supera l'hybrid search.** La combinazione densa pura ($\alpha = 1.0$) si è dimostrata superiore a qualsiasi combinazione con BM25. Il solo BM25 performa molto male (Hit@5 = 0.500) e l'aggiunta di peso lessicale (es. $\alpha = 0.7$) riduce l'ordinamento ottimale. Su appunti universitari scritti in linguaggio naturale ma formali, le rappresentazioni dense superano nettamente l'approccio a parole chiave esatte.
 
-4. **LLM-as-Judge è fortemente allineato alle annotazioni umane nella configurazione finale.** Con `deepseek-v4-flash` come generatore, il giudice `deepseek-v4-pro` raggiunge ρ=1.000 su Faithfulness e ρ=0.934 su Answer Relevance (n=29, p<0.001 per entrambe). La correlazione bassa osservata in un run preliminare con Gemma 4B (ρ_F=0.206) era un artefatto del disallineamento tra il generatore usato per produrre le risposte da valutare e quello usato per compilare le annotazioni manuali di riferimento, non una prova di bias strutturale del giudice LLM. BERTScore, proposto inizialmente come fallback per Faithfulness, mostra ρ=0.095 (non significativo) nel regime di alta qualità prodotto da DeepSeek: la bassa varianza dei punteggi (26/29 F=5) rimuove il potere discriminante di Spearman, e BERTScore non cattura correttezza semantica né fedeltà al contesto.
+4. **LLM-as-Judge è allineato alle annotazioni umane nella configurazione finale, con una cautela statistica.** Con `deepseek-v4-flash` come generatore, il giudice `deepseek-v4-pro` raggiunge ρ=0.934 su Answer Relevance (n=29, p<0.001), il dato realmente informativo perché misurato su una scala dispersa. La ρ=1.000 sulla Faithfulness, invece, **non va interpretata come "accordo perfetto"**: la variabile è quasi degenere (26/29 record = 5 per entrambi i valutatori), quindi Spearman ha potere discriminante minimo — lo stesso limite di bassa varianza per cui scartiamo BERTScore. La correlazione bassa osservata in un run preliminare con Gemma 4B (ρ_F=0.206) era un artefatto del disallineamento tra il generatore usato per produrre le risposte da valutare e quello usato per compilare le annotazioni manuali di riferimento, non una prova di bias strutturale del giudice LLM. BERTScore, proposto inizialmente come fallback per Faithfulness, mostra ρ=0.095 (non significativo) nel regime di alta qualità prodotto da DeepSeek: la bassa varianza dei punteggi (26/29 F=5) rimuove il potere discriminante di Spearman, e BERTScore non cattura correttezza semantica né fedeltà al contesto.
 
-5. **La dimensione del modello generatore ha impatto marginale** su corpus con retrieval di qualità. Gemma 4 2B supera Gemma 4 4B su entrambe le metriche (F: 4.69 vs 4.55, AR: 3.14 vs 3.07) con latenza quasi dimezzata. DeepSeek V4 Flash (API) ottiene il miglior punteggio combinato (4.19) per la stretta aderenza al contesto imposta dalla modalità thinking disabilitata, mentre Llama 3.3 70B guida sull'Answer Relevance (3.93) grazie alla maggiore capacità parametrica — ma a scapito della Faithfulness (4.03). Il retriever di alta qualità compensa il gap di capacità tra modelli: il fattore dominante è il contesto recuperato, non la taglia del generatore.
+5. **La dimensione e l'architettura dei modelli generatori.** Gemma 4 2B supera Gemma 4 4B su entrambe le metriche (F: 4.69 vs 4.55, AR: 3.14 vs 3.07) con latenza quasi dimezzata. I nuovi modelli locali di taglia intermedia mostrano prestazioni eccezionali: **Qwen 2.5 14B (locale)** offre il miglior bilanciamento complessivo in locale ((F+AR)/2 = 4.16) con AR=4.07 e F=4.24, mentre **Granite 4.1 8b (locale)** registra il valore assoluto più alto di Answer Relevance (4.27) del confronto, a scapito della Faithfulness (4.03), che si attesta sullo stesso livello di Llama 3.3 70B. Il retriever di alta qualità compensa in buona parte il gap di capacità tra modelli locali e API, ma i modelli locali più aggiornati come Qwen 2.5 e Granite 4.1 traggono massimo profitto dal contesto fornito superando le API commerciali sull'aderenza alla domanda (AR).
 
-6. **Il gate OOD è altamente efficace con soglia $\theta = 0.40$.** Lo sweep ha dimostrato che a 0.40 si ottiene un indice di Youden J = 0.790, bloccando il 100% delle query OOD reali e il 75% delle prompt injection (l'unica eccezione, `q22`, è stata intercettata dall'LLM). I 5 falsi positivi in-domain (FPR=14.7%) sono causati da rumore OCR, lacune della KB, o variabilità dell'indice HNSW per query al confine della soglia. La retrospettiva sul caso `q21` (oro) mostra come l'allineamento dei dati di Gold Set prevenga le allucinazioni e l'auto-correzione indebita da parte del LLM.
+6. **Il gate OOD è altamente efficace con soglia $\theta = 0.40$ e generalizza su dati nuovi.** Lo sweep ha dimostrato che a 0.40 si ottiene un indice di Youden J = 0.790, bloccando il 100% delle query OOD reali e il 75% delle prompt injection (l'unica eccezione, `q22`, è stata intercettata dall'LLM). I 5 falsi positivi in-domain (FPR=14.7%) sono causati da rumore OCR, lacune della KB, o variabilità dell'indice HNSW per query al confine della soglia. **La validazione su 18 query di holdout mai usate per il tuning (§4.2) conferma la generalizzazione della soglia: TPR 100% / FPR 10%**, escludendo che θ=0.40 sia un artefatto di overfitting sul gold set. La retrospettiva sul caso `q21` (oro) mostra come l'allineamento dei dati di Gold Set prevenga le allucinazioni e l'auto-correzione indebita da parte del LLM.
 
 7. **L'isolamento delle sessioni in ChromaDB in-memory è fondamentale.** La co-esistenza di più collezioni HNSW nello stesso client in-memory introduce instabilità numerica e derive nelle distanze coseno. Per una riproducibilità scientifica rigorosa in fase di testing, è necessario instanziare client separati o sequenzializzare le esecuzioni.
 
 **Sviluppi futuri:**
-- Estensione dell'holdout qualitativo post-hoc con più domande in-domain non usate nel gold set, per mostrare esempi di generalizzazione senza contaminare le metriche principali.
+- Irrobustimento del test set di holdout: l'attuale holdout (§4.2) valida sia il **gate OOD** sia il **retrieval annotato** su query nuove (annotatore indipendente dai modelli valutati, quindi senza circolarità), ma con due debolezze da superare per il pieno rigore — (a) **annotatore singolo**, da affiancare con un **secondo annotatore** per misurare l'accordo inter-annotatore; (b) n=9 è piccolo, da **espandere a ~25–30** query in-domain per intervalli di confidenza più stretti.
 - Sviluppo di un classificatore OOD dedicato (es. tramite fine-tuning su query di dominio) per eliminare la dipendenza da una soglia fissa di distanza.
 - Automazione di pipeline di pulizia OCR (es. tramite modelli LLM leggeri) per rimuovere il rumore nei PDF matematici scansionati prima della fase di chunking.
 - Valutazione su finestre temporali separate (train/test split sul corpus) per misurare la capacità di generalizzazione del sistema a nuove lezioni.

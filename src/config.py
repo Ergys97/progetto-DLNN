@@ -21,6 +21,11 @@ JUDGE_MODEL       = 'deepseek-v4-pro'
 EMBEDDING_MODEL   = 'BAAI/bge-m3'
 
 # ── Pipeline hyperparameters ────────────────────────────────────────────
+# NOTE: OOD_THRESHOLD and HYBRID_ALPHA below are CONSERVATIVE DEFAULTS.
+# The final evaluated configuration overrides them with the values found
+# by Experiments B and D (see report.md §7):
+#   OOD_THRESHOLD -> 0.40  (Youden J = 0.790)
+#   HYBRID_ALPHA  -> 1.0   (pure dense outperforms any BM25 blend)
 OOD_THRESHOLD  = 0.6
 TOP_K_RETRIEVE = 10
 TOP_K_FINAL    = 5

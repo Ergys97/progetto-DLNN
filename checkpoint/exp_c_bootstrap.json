@@ -1,0 +1,41 @@
+{
+  "n_queries": 34,
+  "n_bootstrap": 10000,
+  "seed": 42,
+  "metrics": {
+    "Hit@5": {
+      "baseline_mean": 0.9118,
+      "rerank_mean": 0.8824,
+      "delta_mean": -0.0294,
+      "delta_ci95": [
+        -0.0882,
+        0.0
+      ],
+      "p_delta_lt_0": 0.641,
+      "significant_at_95": false
+    },
+    "MRR": {
+      "baseline_mean": 0.7755,
+      "rerank_mean": 0.7608,
+      "delta_mean": -0.0148,
+      "delta_ci95": [
+        -0.1069,
+        0.0735
+      ],
+      "p_delta_lt_0": 0.6125,
+      "significant_at_95": false
+    },
+    "Recall@5": {
+      "baseline_mean": 0.8814,
+      "rerank_mean": 0.8304,
+      "delta_mean": -0.0508,
+      "delta_ci95": [
+        -0.1255,
+        0.0039
+      ],
+      "p_delta_lt_0": 0.953,
+      "significant_at_95": false
+    }
+  },
+  "conclusion": "Nessuna differenza significativa al 95% (tutti gli IC includono 0): il reranker non porta beneficio misurabile -> disabilitato per parsimonia."
+}

@@ -86,9 +86,28 @@ python scripts/analyze_gold_set.py
 ```
 
 ### ⚡ Eseguire l'esperimento Multi-LLM in Background
-Per lanciare la valutazione comparativa dei quattro generatori (DeepSeek, Llama, Gemma 2B/4B) gestendo in background la latenza e i checkpoint di salvataggio:
+Per lanciare la valutazione comparativa dei sei generatori (DeepSeek V4 Flash, Llama 3.3 70B, Qwen 2.5 14B, Granite 4.1 8B, Gemma 4 2B/4B) gestendo in background la latenza e i checkpoint di salvataggio:
 ```bash
 python scripts/run_exp_f.py
+```
+
+### 🎯 Validare il gate OOD su holdout (generalizzazione di θ)
+Esegue il test del gate su 18 query mai usate per il tuning di θ, calcolando TPR/FPR a θ=0.40 (solo embedder locale, nessuna API):
+```bash
+python scripts/run_holdout_ood.py
+```
+
+### 📐 Analisi di sensibilità della soglia Jaccard (Exp A)
+Verifica che il ranking delle strategie di chunking sia robusto alla soglia di Jaccard (sweep 0.3–0.7):
+```bash
+python scripts/run_jaccard_sensitivity.py
+```
+
+### 📊 Holdout di retrieval (Hit@5/MRR/Recall su query nuove)
+Genera i candidati da annotare, poi calcola le metriche di retrieval sull'holdout annotato:
+```bash
+python scripts/run_holdout_retrieval.py dump   # crea holdout_candidates.json + holdout_audit.md
+python scripts/run_holdout_retrieval.py eval   # metriche + bootstrap CI (richiede expected_chunk_ids)
 ```
 
 ### 🔨 Ricostruire il Notebook da zero

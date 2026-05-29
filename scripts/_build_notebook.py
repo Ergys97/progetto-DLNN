@@ -249,6 +249,56 @@ if BEST_STRATEGY not in collections:
     print(f'Caricata {BEST_STRATEGY} in ChromaDB.')\
 """),
 
+md("""\
+**Sensibilità alla soglia di Jaccard.** La soglia θ_jac=0.5 usata sopra è arbitraria.
+Qui l'Hit@5 testuale viene ricalcolato per più soglie per verificare che il ranking
+delle strategie non sia un artefatto della soglia scelta. Carica dal checkpoint se
+disponibile, altrimenti ricalcola (retrieval numpy sugli embeddings già caricati).\
+"""),
+
+code("""\
+import numpy as np
+from src.metrics import hit_at_k_textual
+
+_JAC_PATH = os.path.join(cfg.CHECKPOINT_DIR, 'exp_a_jaccard_sensitivity.json')
+_TH_JAC   = [0.3, 0.4, 0.5, 0.6, 0.7]
+
+if os.path.exists(_JAC_PATH):
+    with open(_JAC_PATH, 'r', encoding='utf-8') as f:
+        _jac = json.load(f)
+    _tab, _order = _jac['hit5_by_strategy_threshold'], _jac['ranking_at_0.5']
+    print('[CHECKPOINT] Sensibilità Jaccard caricata.')
+
+else:
+    _ref_ids = chunk_ids_per_strategy[REF_STRATEGY]
+    _id2txt  = dict(zip(_ref_ids, list(strategies[REF_STRATEGY])))
+    def _exp_txt(q):
+        return [_id2txt[c] for c in q['expected_chunk_ids'] if c in _id2txt]
+    _Q = np.asarray(embedder.encode([q['query'] for q in indomain_queries],
+                                    normalize_embeddings=True), dtype='float32')
+    _tab = {}
+    for _s, _E in embs_per_strategy.items():
+        _docs  = list(strategies[_s])
+        _topk  = np.argsort(-(_Q @ _E.T), axis=1)[:, :5]
+        _rdocs = [[_docs[i] for i in row] for row in _topk]
+        _tab[_s] = {str(_th): round(float(np.mean(
+                        [hit_at_k_textual(_rdocs[_qi], _exp_txt(_q), 5, threshold=_th)
+                         for _qi, _q in enumerate(indomain_queries)])), 3)
+                    for _th in _TH_JAC}
+    _order = sorted(_tab, key=lambda s: _tab[s]['0.5'], reverse=True)
+    with open(_JAC_PATH, 'w', encoding='utf-8') as f:
+        json.dump({'k': 5, 'thresholds': _TH_JAC, 'metric': 'Hit@5 textual',
+                   'hit5_by_strategy_threshold': _tab, 'ranking_at_0.5': _order},
+                  f, indent=2, ensure_ascii=False)
+    print('[SAVED] Sensibilità Jaccard salvata.')
+
+df_jac = pd.DataFrame(_tab).T.reindex(_order)
+print(df_jac.to_string())
+_winner_ok = all(max(_tab, key=lambda s: _tab[s][str(_th)]) == _order[0] for _th in _TH_JAC)
+print()
+print(f'Migliore a ogni soglia sempre {_order[0]}: {_winner_ok} -> ranking robusto alla soglia.')\
+"""),
+
 # ── Sezione 8: Esperimento B ────────────────────────────────────────────
 md("## Sezione 8 — Esperimento B: Gate Out-of-Domain"),
 
@@ -322,6 +372,88 @@ plt.tight_layout()
 plt.savefig('images/ood_gate_analysis.png', dpi=150); plt.show()\
 """),
 
+md("""\
+**Validazione su holdout (generalizzazione di θ).** La soglia θ è stata scelta sulle
+stesse query usate per la valutazione: per escludere l'overfitting, la testiamo su 18
+query NUOVE (`holdout_set.json`) mai usate nel tuning. `min_distance` è calcolata in
+numpy esatto sugli embeddings del corpus (deterministico, niente variabilità HNSW).
+Solo embedder locale, nessuna chiamata LLM.\
+"""),
+
+code("""\
+import numpy as np
+
+_HOLD_SET = os.path.join(cfg.CHECKPOINT_DIR, 'holdout_set.json')
+_HOLD_RES = os.path.join(cfg.CHECKPOINT_DIR, 'holdout_ood_results.json')
+
+if os.path.exists(_HOLD_RES):
+    with open(_HOLD_RES, 'r', encoding='utf-8') as f:
+        _hold = json.load(f)
+    print('[CHECKPOINT] Holdout OOD caricato.')
+
+elif os.path.exists(_HOLD_SET):
+    with open(_HOLD_SET, 'r', encoding='utf-8') as f:
+        _hq = json.load(f)['queries']
+    _theta = cfg.OOD_THRESHOLD
+    _E = embs_per_strategy[REF_STRATEGY]
+    _Q = np.asarray(embedder.encode([q['query'] for q in _hq],
+                                    normalize_embeddings=True), dtype='float32')
+    _mind = 1.0 - (_Q @ _E.T).max(axis=1)
+    _res = [{'id': q['id'], 'category': q['category'],
+             'min_distance': round(float(d), 4),
+             'status': 'refused_ood' if d > _theta else 'answered'}
+            for q, d in zip(_hq, _mind)]
+    _blk = [r for r in _res if r['category'] in ('out_of_domain', 'prompt_injection')]
+    _pas = [r for r in _res if r['category'].startswith('in_domain')]
+    _tp  = sum(r['status'] == 'refused_ood' for r in _blk)
+    _fp  = sum(r['status'] == 'refused_ood' for r in _pas)
+    _hold = {'summary': {'theta': _theta, 'n_should_block': len(_blk), 'n_should_pass': len(_pas),
+                         'TPR_ood_blocked': round(_tp/len(_blk), 4),
+                         'FPR_indomain_blocked': round(_fp/len(_pas), 4), 'tp': _tp, 'fp': _fp},
+             'results': _res}
+    with open(_HOLD_RES, 'w', encoding='utf-8') as f:
+        json.dump(_hold, f, indent=2, ensure_ascii=False)
+    print('[SAVED] Holdout OOD salvato.')
+
+else:
+    _hold = None
+    print('[SKIP] holdout_set.json non trovato.')
+
+if _hold:
+    _s = _hold['summary']
+    df_hold = pd.DataFrame(_hold['results']).sort_values('min_distance')
+    print(df_hold[['id', 'category', 'min_distance', 'status']].to_string(index=False))
+    print()
+    print(f"theta = {_s['theta']}")
+    print(f"TPR (OOD bloccate)       = {_s['TPR_ood_blocked']:.1%}  ({_s['tp']}/{_s['n_should_block']})")
+    print(f"FPR (in-domain bloccate) = {_s['FPR_indomain_blocked']:.1%}  ({_s['fp']}/{_s['n_should_pass']})")\
+"""),
+
+md("""\
+**Holdout di retrieval (Hit@5/MRR/Recall su query nuove).** Le query in-domain di
+holdout, annotate con `expected_chunk_ids`, danno metriche di retrieval su dati mai
+visti. Generazione candidati + valutazione: `python scripts/run_holdout_retrieval.py
+dump|eval`. L'annotatore è indipendente dai modelli valutati (BGE-M3, DeepSeek): nessuna
+circolarità né auto-valutazione (vedi report §4.2/§9).\
+"""),
+
+code("""\
+_RET_PATH = os.path.join(cfg.CHECKPOINT_DIR, 'holdout_retrieval_results.json')
+if os.path.exists(_RET_PATH):
+    with open(_RET_PATH, 'r', encoding='utf-8') as f:
+        _ret = json.load(f)
+    _s = _ret['summary']
+    print(f"Holdout retrieval (n={_s['n']} query in-domain annotate, {_ret['strategy']})")
+    for _m in ['Hit@5', 'MRR', 'Recall@5']:
+        _v = _s[_m]
+        print(f"  {_m:<9} = {_v['mean']:.3f}  [95% CI {_v['ci95'][0]:.3f}, {_v['ci95'][1]:.3f}]")
+    print()
+    print(pd.DataFrame(_ret['per_query']).to_string(index=False))
+else:
+    print('[INFO] holdout_retrieval_results.json non trovato.')
+    print('Esegui: python scripts/run_holdout_retrieval.py dump  (poi annota)  ed eval.')\
+"""),
+
 # ── Sezione 9: Esperimento C ────────────────────────────────────────────
 md("## Sezione 9 — Esperimento C: Re-ranking con CrossEncoder"),
 
@@ -367,6 +499,39 @@ else:
 
 print('=== Medie ===')
 print(df_rerank[[c for c in df_rerank.columns if c != 'id']].mean().round(3).to_string())\
+"""),
+
+md("""\
+**Significatività statistica (bootstrap appaiato).** Le medie da sole non dicono se la
+differenza baseline vs rerank sia reale o rumore campionario. Con un bootstrap appaiato
+(ricampionando le stesse query per baseline e rerank) stimiamo l'intervallo di confidenza
+al 95% sulla differenza media. Se l'intervallo include 0, la differenza non è significativa.\
+"""),
+
+code("""\
+import numpy as np
+
+rng = np.random.default_rng(42)
+n_q = len(df_rerank)
+B   = 10000
+
+print(f'Bootstrap appaiato: n={n_q} query, B={B}, seed=42')
+header = 'Metrica'.ljust(10) + 'Baseline'.ljust(10) + 'Rerank'.ljust(10) + 'Delta [95% CI]'.ljust(26) + 'P(Delta<0)'
+print(header)
+for name in ['Hit@5', 'MRR', 'Recall@5']:
+    base = df_rerank[f'{name} (baseline)'].to_numpy(float)
+    rnk  = df_rerank[f'{name} (rerank)'].to_numpy(float)
+    idx  = rng.integers(0, n_q, size=(B, n_q))
+    deltas = rnk[idx].mean(axis=1) - base[idx].mean(axis=1)
+    lo, hi = np.percentile(deltas, [2.5, 97.5])
+    p_neg  = float((deltas < 0).mean())
+    ci = f'{deltas.mean():+.3f} [{lo:+.3f}, {hi:+.3f}]'
+    print(f'{name:<10}{base.mean():<10.3f}{rnk.mean():<10.3f}{ci:<26}{p_neg:<10.3f}')
+
+print()
+print('Lettura: tutti gli IC al 95% sulla differenza includono lo 0 ->')
+print('il reranker non porta un miglioramento statisticamente significativo.')
+print('Decisione: reranker disabilitato per parsimonia (nessun beneficio + latenza/costo).')\
 """),
 
 # ── Sezione 10: Esperimento D ───────────────────────────────────────────
@@ -536,26 +701,31 @@ for r in judge_records:
 """),
 
 code("""\
-MANUAL_SCORES = {
-    'q01': {'faithfulness': 1, 'answer_relevance': 1},
-    'q02': {'faithfulness': 5, 'answer_relevance': 5},
-    'q03': {'faithfulness': 4, 'answer_relevance': 5},
-    'q04': {'faithfulness': 4, 'answer_relevance': 4},
-    'q05': {'faithfulness': 5, 'answer_relevance': 5},
-    'q06': {'faithfulness': 2, 'answer_relevance': 4},
-    'q07': {'faithfulness': 1, 'answer_relevance': 1},
-    'q08': {'faithfulness': 5, 'answer_relevance': 5},
-    'q09': {'faithfulness': 3, 'answer_relevance': 4},
-    'q10': {'faithfulness': 4, 'answer_relevance': 5},
-    'q11': {'faithfulness': 4, 'answer_relevance': 4},
-    'q12': {'faithfulness': 3, 'answer_relevance': 3},
-    'q13': {'faithfulness': 3, 'answer_relevance': 4},
-    'q14': {'faithfulness': 4, 'answer_relevance': 4},
-    'q15': {'faithfulness': 4, 'answer_relevance': 5},
-}
-
-with open(cfg.MANUAL_EVAL_PATH, 'w', encoding='utf-8') as f:
-    json.dump(MANUAL_SCORES, f, ensure_ascii=False, indent=2)
+if os.path.exists(cfg.MANUAL_EVAL_PATH):
+    with open(cfg.MANUAL_EVAL_PATH, 'r', encoding='utf-8') as f:
+        MANUAL_SCORES = json.load(f)
+    print(f"[CHECKPOINT] Caricati {len(MANUAL_SCORES)} record di valutazione manuale.")
+else:
+    MANUAL_SCORES = {
+        'q01': {'faithfulness': 1, 'answer_relevance': 1},
+        'q02': {'faithfulness': 5, 'answer_relevance': 5},
+        'q03': {'faithfulness': 4, 'answer_relevance': 5},
+        'q04': {'faithfulness': 4, 'answer_relevance': 4},
+        'q05': {'faithfulness': 5, 'answer_relevance': 5},
+        'q06': {'faithfulness': 2, 'answer_relevance': 4},
+        'q07': {'faithfulness': 1, 'answer_relevance': 1},
+        'q08': {'faithfulness': 5, 'answer_relevance': 5},
+        'q09': {'faithfulness': 3, 'answer_relevance': 4},
+        'q10': {'faithfulness': 4, 'answer_relevance': 5},
+        'q11': {'faithfulness': 4, 'answer_relevance': 4},
+        'q12': {'faithfulness': 3, 'answer_relevance': 3},
+        'q13': {'faithfulness': 3, 'answer_relevance': 4},
+        'q14': {'faithfulness': 4, 'answer_relevance': 4},
+        'q15': {'faithfulness': 4, 'answer_relevance': 5},
+    }
+    with open(cfg.MANUAL_EVAL_PATH, 'w', encoding='utf-8') as f:
+        json.dump(MANUAL_SCORES, f, ensure_ascii=False, indent=2)
+    print("Creato checkpoint manual_eval.json con i punteggi di default.")
 
 from scipy.stats import spearmanr
 judge_lookup = {r['id']: r for r in judge_records}
@@ -627,10 +797,11 @@ code("""\
 import time as _time
 
 ALL_MODELS = [
-    {'id': 'gemma4:e2b',              'label': 'Gemma 4 2B (locale)',   'backend': 'ollama'},
-    {'id': 'gemma4:e4b',              'label': 'Gemma 4 4B (locale)',   'backend': 'ollama'},
-    {'id': 'hf.co/Jiunsong/supergemma4-26b-uncensored-gguf-v2:Q4_K_M', 'label': 'Gemma 4 26B (locale)',  'backend': 'ollama'},
-    {'id': 'llama-3.3-70b-versatile', 'label': 'Llama 3.3 70B (Groq)', 'backend': 'groq'},
+    {'id': 'gemma4:e2b',              'label': 'Gemma 4 2B (locale)',     'backend': 'ollama'},
+    {'id': 'gemma4:e4b',              'label': 'Gemma 4 4B (locale)',     'backend': 'ollama'},
+    {'id': 'qwen2.5:14b',             'label': 'Qwen 2.5 14B (locale)',   'backend': 'ollama'},
+    {'id': 'granite4.1:8b',           'label': 'Granite 4.1 8b (locale)', 'backend': 'ollama'},
+    {'id': 'llama-3.3-70b-versatile', 'label': 'Llama 3.3 70B (Groq)',    'backend': 'groq'},
     {'id': 'deepseek-v4-flash',       'label': 'DeepSeek V4 Flash',     'backend': 'deepseek'},
 ]
 
@@ -784,14 +955,17 @@ print('='*70)
 _hit5       = df_retrieval[df_retrieval['Top-k']==5].sort_values('Hit@k',ascending=False).iloc[0]['Hit@k']
 _hybrid_h5  = df_alpha.loc[df_alpha['alpha'].sub(cfg.HYBRID_ALPHA).abs().idxmin(), 'Hit@5']
 _youden     = float(df_sweep.loc[df_sweep['Youden J'].idxmax(), 'Youden J'])
+_delta_h5   = round(float(df_rerank['Hit@5 (rerank)'].mean() - df_rerank['Hit@5 (baseline)'].mean()), 3)
+_far        = df_llm.groupby('model')[['faithfulness','answer_relevance']].mean().sum(axis=1) / 2
+_far_model, _far_val = _far.idxmax(), round(float(_far.max()), 2)
 
 rows_sum = [
     {'Exp':'A — Chunking',   'Config': BEST_STRATEGY,           'KPI':'Hit@5',    'Valore': _hit5},
     {'Exp':'B — OOD Gate',   'Config': f'θ={cfg.OOD_THRESHOLD}','KPI':'Youden J', 'Valore': _youden},
-    {'Exp':'C — Re-ranking', 'Config': 'CrossEncoder bge-v2-m3','KPI':'ΔHit@5',  'Valore': '—'},
+    {'Exp':'C — Re-ranking', 'Config': 'CrossEncoder bge-v2-m3','KPI':'ΔHit@5',  'Valore': f'{_delta_h5:+.3f} (n.s.)'},
     {'Exp':'D — Hybrid',     'Config': f'α={cfg.HYBRID_ALPHA}', 'KPI':'Hit@5',   'Valore': _hybrid_h5},
-    {'Exp':'E — LLM Judge',  'Config': cfg.JUDGE_MODEL,          'KPI':'Spearman','Valore': '—'},
-    {'Exp':'F — Multi-LLM',  'Config': 'vs Groq / DeepSeek',    'KPI':'F+AR/2',  'Valore': '—'},
+    {'Exp':'E — LLM Judge',  'Config': cfg.JUDGE_MODEL,          'KPI':'ρ(AR)',   'Valore': round(float(rho_r), 3)},
+    {'Exp':'F — Multi-LLM',  'Config': f'best: {_far_model}',    'KPI':'F+AR/2',  'Valore': _far_val},
 ]
 print(pd.DataFrame(rows_sum).to_string(index=False))
 print()
