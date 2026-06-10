@@ -476,3 +476,4 @@ Questo lavoro ha costruito e valutato una pipeline RAG locale su una knowledge b
 - Sviluppo di un classificatore OOD dedicato (es. tramite fine-tuning su query di dominio) per eliminare la dipendenza da una soglia fissa di distanza.
 - Automazione di pipeline di pulizia OCR (es. tramite modelli LLM leggeri) per rimuovere il rumore nei PDF matematici scansionati prima della fase di chunking.
 - Valutazione su finestre temporali separate (train/test split sul corpus) per misurare la capacità di generalizzazione del sistema a nuove lezioni.
+- Estensione della scaling analysis sulla famiglia Gemma 4 (2B → 4B → 12B, quest'ultimo già disponibile in locale via Ollama): l'osservazione che il 2B supera il 4B (§5.3) suggerisce che su corpus tecnico con contesto fornito dal retriever la capacità aggiuntiva non si traduca in qualità misurabile — un terzo punto sulla curva permetterebbe di confermare o smentire il trend.
