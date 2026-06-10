@@ -8,7 +8,7 @@ Per tutti i dettagli metodologici, le analisi teoriche e la discussione dei risu
 
 ---
 
-## 🛠️ Architettura del Sistema
+## Architettura del Sistema
 
 ```
 PDF universitari ──> Chunking (5 strategie) ──> Embeddings BGE-M3 ──> ChromaDB in-memory
@@ -19,7 +19,7 @@ Query ──> Gate OOD (cosine θ) ──> Hybrid Search (BM25 + Dense, α) ─�
 
 ---
 
-## 📁 Struttura della Repository
+## Struttura della Repository
 
 *   [src/](file:///C:/Users/ergys/Desktop/Git_Repositories/progetto-DLNN/src/) — Contiene la logica modulare Python del sistema RAG:
     *   [config.py](file:///C:/Users/ergys/Desktop/Git_Repositories/progetto-DLNN/src/config.py) — Gestione delle chiavi API, iperparametri e percorsi dei checkpoint.
@@ -38,7 +38,7 @@ Query ──> Gate OOD (cosine θ) ──> Hybrid Search (BM25 + Dense, α) ─�
 
 ---
 
-## 🚀 Setup e Installazione
+## Setup e Installazione
 
 ### 1. Prerequisiti
 Assicurati di avere installato Python (consigliato >= 3.9, < 3.12) e `pip`.
@@ -63,54 +63,54 @@ DEEPSEEK_API_KEY=tua_chiave_qui
 
 ---
 
-## 💻 Utilizzo degli Script Helper
+## Utilizzo degli Script Helper
 
 La repository include diversi script standalone (ora organizzati nella directory `scripts/`) per gestire e testare il flusso di lavoro:
 
-### 🧪 Eseguire i test automatici sui moduli
+### Eseguire i test automatici sui moduli
 Verifica che tutti i moduli della cartella `src/` funzionino correttamente eseguendo lo smoke test:
 ```bash
 python scripts/_test_modules.py
 ```
 
-### 📝 Annotazione interattiva del Gold Set
+### Annotazione interattiva del Gold Set
 Se desideri annotare nuove query o modificare l'assegnazione dei chunk attesi (`expected_chunk_ids`) nel gold set:
 ```bash
 python scripts/annotate_gold_set.py
 ```
 
-### 🔍 Generare l'audit del Gold Set
+### Generare l'audit del Gold Set
 Genera il file markdown di ispezione visuale per confrontare le domande con i testi effettivi dei chunk annotati:
 ```bash
 python scripts/analyze_gold_set.py
 ```
 
-### ⚡ Eseguire l'esperimento Multi-LLM in Background
+### Eseguire l'esperimento Multi-LLM in Background
 Per lanciare la valutazione comparativa dei sei generatori (DeepSeek V4 Flash, Llama 3.3 70B, Qwen 2.5 14B, Granite 4.1 8B, Gemma 4 2B/4B) gestendo in background la latenza e i checkpoint di salvataggio:
 ```bash
 python scripts/run_exp_f.py
 ```
 
-### 🎯 Validare il gate OOD su holdout (generalizzazione di θ)
+### Validare il gate OOD su holdout (generalizzazione di θ)
 Esegue il test del gate su 18 query mai usate per il tuning di θ, calcolando TPR/FPR a θ=0.40 (solo embedder locale, nessuna API):
 ```bash
 python scripts/run_holdout_ood.py
 ```
 
-### 📐 Analisi di sensibilità della soglia Jaccard (Exp A)
+### Analisi di sensibilità della soglia Jaccard (Exp A)
 Verifica che il ranking delle strategie di chunking sia robusto alla soglia di Jaccard (sweep 0.3–0.7):
 ```bash
 python scripts/run_jaccard_sensitivity.py
 ```
 
-### 📊 Holdout di retrieval (Hit@5/MRR/Recall su query nuove)
+### Holdout di retrieval (Hit@5/MRR/Recall su query nuove)
 Genera i candidati da annotare, poi calcola le metriche di retrieval sull'holdout annotato:
 ```bash
 python scripts/run_holdout_retrieval.py dump   # crea holdout_candidates.json + holdout_audit.md
 python scripts/run_holdout_retrieval.py eval   # metriche + bootstrap CI (richiede expected_chunk_ids)
 ```
 
-### 🔨 Ricostruire il Notebook da zero
+### Ricostruire il Notebook da zero
 Il notebook `rag_experiment.ipynb` è generato in modo programmatico da uno script sorgente Python per garantire la consistenza formale delle sezioni. Se apporti modifiche al template, puoi rigenerare il notebook tramite:
 ```bash
 python scripts/_build_notebook.py
