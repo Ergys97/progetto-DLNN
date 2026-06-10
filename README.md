@@ -4,7 +4,7 @@ Questo progetto implementa e valuta quantitativamente un sistema **RAG (Retrieva
 
 L'obiettivo principale è analizzare l'efficacia delle diverse strategie di chunking, implementare un gate per query fuori dominio (**OOD**), ottimizzare la ricerca ibrida e valutare le risposte generate tramite un approccio **LLM-as-a-Judge** allineato a valutazioni umane.
 
-Per tutti i dettagli metodologici, le analisi teoriche e la discussione dei risultati sperimentali, si rimanda al [Report Finale](relazione.md).
+Per tutti i dettagli metodologici, le analisi teoriche e la discussione dei risultati sperimentali, si rimanda al [Report Finale](report.md).
 
 ---
 
