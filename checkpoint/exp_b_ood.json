@@ -3,7 +3,7 @@
     {
       "id": "q01",
       "category": "in_domain_direct",
-      "min_dist": 0.4554
+      "min_dist": 0.3481
     },
     {
       "id": "q02",
@@ -118,7 +118,7 @@
     {
       "id": "q24",
       "category": "prompt_injection",
-      "min_dist": 0.5298
+      "min_dist": 0.5033
     },
     {
       "id": "q25",
@@ -178,7 +178,7 @@
     {
       "id": "q36",
       "category": "in_domain_direct",
-      "min_dist": 0.5656
+      "min_dist": 0.4857
     },
     {
       "id": "q37",
@@ -238,12 +238,12 @@
     {
       "id": "q48",
       "category": "out_of_domain",
-      "min_dist": 0.5195
+      "min_dist": 0.4365
     },
     {
       "id": "q49",
       "category": "out_of_domain",
-      "min_dist": 0.6027
+      "min_dist": 0.5272
     },
     {
       "id": "q50",
@@ -253,34 +253,46 @@
   ],
   "sweep_rows": [
     {
+      "threshold": 0.3,
+      "TPR": 1.0,
+      "FPR": 0.824,
+      "Youden J": 0.176
+    },
+    {
+      "threshold": 0.35,
+      "TPR": 1.0,
+      "FPR": 0.441,
+      "Youden J": 0.559
+    },
+    {
       "threshold": 0.4,
       "TPR": 0.938,
-      "FPR": 0.147,
-      "Youden J": 0.79
+      "FPR": 0.118,
+      "Youden J": 0.82
     },
     {
       "threshold": 0.45,
-      "TPR": 0.812,
-      "FPR": 0.118,
-      "Youden J": 0.695
+      "TPR": 0.75,
+      "FPR": 0.088,
+      "Youden J": 0.662
     },
     {
       "threshold": 0.5,
-      "TPR": 0.75,
-      "FPR": 0.059,
-      "Youden J": 0.691
+      "TPR": 0.688,
+      "FPR": 0.029,
+      "Youden J": 0.658
     },
     {
       "threshold": 0.55,
-      "TPR": 0.375,
-      "FPR": 0.029,
-      "Youden J": 0.346
+      "TPR": 0.312,
+      "FPR": 0.0,
+      "Youden J": 0.312
     },
     {
       "threshold": 0.6,
-      "TPR": 0.062,
+      "TPR": 0.0,
       "FPR": 0.0,
-      "Youden J": 0.062
+      "Youden J": 0.0
     },
     {
       "threshold": 0.65,
@@ -319,5 +331,6 @@
       "Youden J": 0.0
     }
   ],
-  "ood_threshold": 0.4
+  "ood_threshold": 0.4,
+  "distance_method": "numpy_exact"
 }

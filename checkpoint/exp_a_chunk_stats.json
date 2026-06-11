@@ -1,0 +1,37 @@
+{
+  "fixed_256": {
+    "n_chunks": 58988,
+    "mean_words": 43.7,
+    "median_words": 41.0,
+    "p10_words": 33.0,
+    "p90_words": 59.0
+  },
+  "fixed_512": {
+    "n_chunks": 26458,
+    "mean_words": 87.7,
+    "median_words": 82.0,
+    "p10_words": 68.0,
+    "p90_words": 117.0
+  },
+  "fixed_1024": {
+    "n_chunks": 12741,
+    "mean_words": 173.3,
+    "median_words": 164.0,
+    "p10_words": 138.0,
+    "p90_words": 233.0
+  },
+  "recursive_512": {
+    "n_chunks": 32367,
+    "mean_words": 67.2,
+    "median_words": 69.0,
+    "p10_words": 25.0,
+    "p90_words": 104.0
+  },
+  "sentence_5": {
+    "n_chunks": 14006,
+    "mean_words": 182.2,
+    "median_words": 128.0,
+    "p10_words": 55.0,
+    "p90_words": 340.0
+  }
+}

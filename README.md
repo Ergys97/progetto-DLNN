@@ -110,8 +110,11 @@ python scripts/run_holdout_retrieval.py dump   # crea holdout_candidates.json + 
 python scripts/run_holdout_retrieval.py eval   # metriche + bootstrap CI (richiede expected_chunk_ids)
 ```
 
-### Ricostruire il Notebook da zero
-Il notebook `rag_experiment.ipynb` è generato in modo programmatico da uno script sorgente Python per garantire la consistenza formale delle sezioni. Se apporti modifiche al template, puoi rigenerare il notebook tramite:
+### Ricalcolare gli esperimenti A e B senza notebook
+Gli script `recompute_exp_a.py` e `recompute_exp_b.py` ricalcolano i checkpoint e i grafici dei due esperimenti (Exp B con distanze numpy esatte, senza ChromaDB):
 ```bash
-python scripts/_build_notebook.py
+python scripts/recompute_exp_a.py
+python scripts/recompute_exp_b.py
 ```
+
+> Nota: il notebook `rag_experiment.ipynb` è la fonte di verità del progetto — lo script che lo generava programmaticamente è stato rimosso perché ormai disallineato dalle revisioni successive.
