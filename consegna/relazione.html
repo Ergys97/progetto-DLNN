@@ -33,7 +33,7 @@ MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] } };
 <h2>1. Introduzione e Obiettivo</h2>
 <p>Questo progetto implementa e valuta un sistema RAG (Retrieval-Augmented Generation) costruito interamente in locale su una knowledge base personale: gli appunti universitari dell'autore (vault Obsidian + PDF dei corsi di triennale).</p>
 <p>L'obiettivo non è massimizzare un benchmark pubblico, ma rispondere a una domanda concreta: <em>è possibile costruire un assistente affidabile sulle proprie note universitarie, con strumenti open-source e API gratuite, e misurare rigorosamente quanto è affidabile?</em></p>
-<p>La risposta è sì, ma con tre vincoli emersi sperimentalmente: la qualità del retrieval è più sensibile alla strategia di chunking di quanto ci si aspetti; l'affidabilità di un giudice LLM dipende criticamente dall'allineamento tra il generatore valutato e le annotazioni di riferimento; il limite di token giornaliero delle API gratuite è il vero collo di bottiglia operativo.</p>
+<p>La risposta è sì, ma con tre vincoli emersi sperimentalmente: la misura della qualità del retrieval è sensibile tanto alla strategia di chunking quanto alla <em>metrica</em> con cui le strategie vengono confrontate (un bias nella metrica può gonfiare divari in realtà contenuti — §4.1); l'affidabilità di un giudice LLM dipende criticamente dall'allineamento tra il generatore valutato e le annotazioni di riferimento; il limite di token giornaliero delle API gratuite è il vero collo di bottiglia operativo.</p>
 <hr />
 <h2>2. Architettura del Sistema</h2>
 <h3>2.1 Pipeline</h3>
@@ -104,7 +104,7 @@ MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] } };
 </tbody>
 </table>
 <p>Per le query in-domain, ogni query è annotata con <code>expected_chunk_ids</code>: i chunk attesi nel top-k del retriever, identificati tramite l'helper <code>annotate_gold_set.py</code> che mostra i top-20 chunk e permette di selezionare quelli rilevanti.</p>
-<p><strong>Nota metodologica:</strong> L'annotazione è stata effettuata usando la strategia di riferimento <code>recursive_512</code>. Questo implica che i chunk ID attesi appartengono all'universo di quella strategia. Per confrontare le strategie di chunking in modo equo, si è adottata una metrica testuale basata su <em>Jaccard</em> (§4.1).</p>
+<p><strong>Nota metodologica:</strong> L'annotazione è stata effettuata usando la strategia di riferimento <code>recursive_512</code>. Questo implica che i chunk ID attesi appartengono all'universo di quella strategia. Per confrontare le strategie di chunking, in §4.1 si adottano <strong>due metriche testuali con bias di segno opposto</strong> — la similarità di <em>Jaccard</em> (che penalizza i chunk di dimensione diversa dal riferimento) e la <em>coverage</em> asimmetrica (che favorisce leggermente i chunk grandi): un ranking concorde sotto entrambe non può essere un artefatto della singola metrica. Resta un bias di annotazione più sottile e non eliminabile a posteriori: l'helper mostra i top-20 chunk <em>dell'indice <code>recursive_512</code></em>, quindi "rilevante" è operativamente definito come "contenuto che recursive_512 è in grado di recuperare" (cfr. §9).</p>
 <hr />
 <h2>4. Esperimenti di Retrieval</h2>
 <h3>4.1 Esperimento A — Strategie di Chunking</h3>
@@ -147,7 +147,7 @@ MathJax = { tex: { inlineMath: [['$', '$']], displayMath: [['$$', '$$']] } };
 
 hit_at_k_textual = 1  se ∃ doc ∈ top-k : jaccard(doc, expected) ≥ 0.5
 </code></pre>
-<p>Questa metrica misura l'overlap testuale effettivo piuttosto che l'identità degli ID, ed è quindi molto meno sensibile alla strategia di chunking del confronto ID-based — ma non del tutto invariante: chunk molto più grandi di quelli attesi sono strutturalmente penalizzati (un chunk <code>fixed_1024</code> che <em>contiene</em> interamente il chunk atteso da ~512 token si ferma a Jaccard ≈ 0.5, proprio sulla soglia), e i chunk della strategia di riferimento coincidono esattamente con i testi annotati (Jaccard ≈ 1). Il bias residuo è quantificato dall'analisi di sensibilità alla soglia, più sotto.</p>
+<p>Questa metrica misura l'overlap testuale effettivo piuttosto che l'identità degli ID, ed è quindi molto meno sensibile alla strategia di chunking del confronto ID-based — ma non del tutto invariante: la Jaccard è simmetrica, quindi penalizza il mismatch dimensionale <em>in entrambe le direzioni</em> anche a retrieval perfetto. Un chunk <code>fixed_1024</code> che <em>contiene</em> interamente il chunk atteso da ~512 token si ferma a Jaccard ≈ 0.5 (proprio sulla soglia); due chunk <code>sentence_5</code> piccoli che insieme coprono tutto il testo atteso valgono ≈ 0.25 ciascuno (miss a ogni soglia); i chunk della strategia di riferimento, invece, coincidono esattamente con i testi annotati (Jaccard ≈ 1). Il bias residuo è quantificato da due controlli più sotto: l'analisi di sensibilità alla soglia e la <strong>controprova con metrica di coverage asimmetrica</strong>, che ha il bias dimensionale di segno opposto.</p>
 <p><strong>Risultati (metrica Jaccard, soglia 0.5):</strong></p>
 <table>
 <thead>
@@ -203,8 +203,8 @@ hit_at_k_textual = 1  se ∃ doc ∈ top-k : jaccard(doc, expected) ≥ 0.5
 </tr>
 </tbody>
 </table>
-<p><code>recursive_512</code> ottiene Hit@5 = 0.971 e Recall@5 = 0.948, risultando di gran lunga superiore a tutte le altre opzioni. Le strategie a finestra fissa (<code>fixed_*</code>) raggiungono un Hit@5 compreso tra 0.73 e 0.85, ma soffrono di un Recall@5 notevolmente ridotto (0.42–0.57), a indicare che intercettano solo parzialmente il contesto atteso. La strategia <code>sentence_5</code> si dimostra del tutto inadeguata (Hit@5 = 0.412, MRR@5 = 0.229): i confini rigidi basati sul numero fisso di frasi frammentano concetti e formule matematiche complessi, che richiedono paragrafi contigui per preservare la propria coerenza semantica.</p>
-<p>La strategia <code>recursive_512</code> si conferma come la scelta di riferimento per gli esperimenti successivi, grazie alla capacità dello splitter ricorsivo di rispettare la struttura logica del testo (paragrafi e intestazioni), riducendo la dispersione informativa.</p>
+<p>Sotto la metrica Jaccard <code>recursive_512</code> ottiene Hit@5 = 0.971 e Recall@5 = 0.948, con un distacco apparentemente enorme sulle altre strategie (<code>sentence_5</code> crolla a Hit@5 = 0.412). <strong>Questi divari vanno però letti con cautela</strong>: parte del distacco è artefatto del mismatch dimensionale descritto sopra, non scarsa qualità di retrieval — la controprova con la metrica di coverage (più sotto) mostra che <code>sentence_5</code> e <code>fixed_1024</code> recuperano il contenuto rilevante molto più spesso di quanto la Jaccard lasci intendere.</p>
+<p>La strategia <code>recursive_512</code> si conferma comunque la scelta di riferimento per gli esperimenti successivi: è prima sotto <em>entrambe</em> le metriche, grazie alla capacità dello splitter ricorsivo di rispettare la struttura logica del testo (paragrafi e intestazioni) — ma con un margine reale piccolo, non con il crollo delle alternative suggerito dalla sola tabella Jaccard.</p>
 <p><strong>Statistiche dei chunk per strategia.</strong> La spiegazione causale del ranking emerge dalla granularità dei chunk prodotti (<code>checkpoint/exp_a_chunk_stats.json</code>, grafico in <code>images/exp_a_chunk_stats.png</code>):</p>
 <table>
 <thead>
@@ -248,7 +248,7 @@ hit_at_k_textual = 1  se ∃ doc ∈ top-k : jaccard(doc, expected) ≥ 0.5
 </tr>
 </tbody>
 </table>
-<p><code>recursive_512</code> produce chunk di granularità intermedia ma con confini allineati alla struttura del testo. Agli estremi: <code>fixed_256</code> frammenta (59k chunk da ~41 parole, contesto insufficiente), <code>fixed_1024</code> diluisce (chunk da ~164 parole, il segnale rilevante è annacquato nell'embedding), e <code>sentence_5</code> è la più eterogenea (p10–p90 = 55–340 parole): il numero fisso di frasi produce chunk minuscoli sulle liste puntate e enormi sui paragrafi densi, ed è questa varianza — più che la dimensione media — a spiegarne il collasso.</p>
+<p><code>recursive_512</code> produce chunk di granularità intermedia ma con confini allineati alla struttura del testo. Agli estremi: <code>fixed_256</code> frammenta (59k chunk da ~41 parole, contesto insufficiente), <code>fixed_1024</code> diluisce (chunk da ~164 parole, il segnale rilevante è annacquato nell'embedding), e <code>sentence_5</code> è la più eterogenea (p10–p90 = 55–340 parole): il numero fisso di frasi produce chunk minuscoli sulle liste puntate ed enormi sui paragrafi densi. Questa stessa eterogeneità spiega anche perché <code>sentence_5</code> sia la strategia più penalizzata dalla Jaccard simmetrica: chunk di dimensione molto diversa dal riferimento ~512 token hanno overlap relativo basso <em>per costruzione</em>, anche quando il contenuto recuperato è quello giusto — come conferma la controprova di coverage più sotto.</p>
 <p><strong>Sensibilità alla soglia di Jaccard.</strong> La soglia θ_jac = 0.5 è una scelta arbitraria; per verificare che il ranking delle strategie non sia un suo artefatto, l'Hit@5 testuale è stato ricalcolato su un intervallo di soglie:</p>
 <table>
 <thead>
@@ -304,8 +304,67 @@ hit_at_k_textual = 1  se ∃ doc ∈ top-k : jaccard(doc, expected) ≥ 0.5
 </tr>
 </tbody>
 </table>
-<p><code>recursive_512</code> resta la migliore a <strong>ogni</strong> soglia e l'ordinamento complessivo è stabile: la conclusione di Exp A non dipende dalla scelta di 0.5. Va però osservato che l'Hit@5 di <code>recursive_512</code> è <em>invariante</em> alla soglia (0.971 ovunque) <strong>proprio perché i testi attesi sono chunk di <code>recursive_512</code></strong>: un chunk recuperato che coincide con quello atteso ha Jaccard ≈ 1.0 e supera qualunque soglia. Questo è il vantaggio di casa residuo della strategia di riferimento (§3): le altre strategie degradano all'aumentare della soglia perché i loro confini producono solo un overlap <em>parziale</em> con i testi annotati. La metrica Jaccard rimuove la tautologia degli ID disgiunti ma non azzera del tutto il bias di annotazione. Dati in <code>checkpoint/exp_a_jaccard_sensitivity.json</code> (<code>python scripts/run_jaccard_sensitivity.py</code>), grafico in <code>images/exp_a_jaccard_sensitivity.png</code> — la curva piatta di <code>recursive_512</code> contro il degrado progressivo delle altre strategie visualizza esattamente entrambi gli effetti.</p>
-<p><strong>Breakdown per categoria di query.</strong> Metriche @5 separate per tipo di query (<code>checkpoint/exp_a_category_breakdown.json</code>):</p>
+<p><code>recursive_512</code> resta la migliore a <strong>ogni</strong> soglia: la conclusione di Exp A non dipende dalla scelta di 0.5. Questa analisi va però letta per ciò che può e non può dimostrare. L'Hit@5 di <code>recursive_512</code> è <em>invariante</em> alla soglia (0.971 ovunque) <strong>proprio perché i testi attesi sono chunk di <code>recursive_512</code></strong>: un chunk recuperato che coincide con quello atteso ha Jaccard ≈ 1.0 e supera qualunque soglia. La curva piatta non è quindi prova di robustezza della strategia, ma il sintomo del vantaggio di casa del riferimento (§3) — un bias <em>indipendente dalla soglia</em>, che lo sweep per costruzione non può rilevare. Lo sweep esclude solo che il ranking sia un artefatto della scelta di θ_jac; il bias di annotazione richiede la controprova seguente. Si noti comunque che a θ_jac = 0.3, dove il mismatch dimensionale pesa meno, il distacco si riduce sensibilmente (0.971 vs 0.912 di <code>fixed_512</code>). Dati in <code>checkpoint/exp_a_jaccard_sensitivity.json</code> (<code>python scripts/run_jaccard_sensitivity.py</code>), grafico in <code>images/exp_a_jaccard_sensitivity.png</code>.</p>
+<p><strong>Controprova: metrica di coverage asimmetrica.</strong> Per quantificare quanto del divario Jaccard sia artefatto del mismatch dimensionale, l'esperimento è stato ripetuto con una metrica di <em>coverage</em> (containment) che misura la frazione dei token del testo atteso coperti dall'<strong>unione</strong> dei top-5 recuperati:</p>
+<pre><code>coverage(expected) = |tokens(∪ top-k) ∩ tokens(expected)| / |tokens(expected)|
+</code></pre>
+<p>A retrieval perfetto la coverage vale 1.0 per qualunque strategia: un chunk <code>fixed_1024</code> che contiene il testo atteso, o più chunk <code>sentence_5</code> che insieme lo coprono, non sono più penalizzati. Il suo bias residuo è di segno <em>opposto</em> alla Jaccard (favorisce leggermente i chunk grandi, che accumulano più token); le due metriche delimitano quindi il risultato vero. Risultati (<code>checkpoint/exp_a_coverage_comparison.json</code>, <code>python scripts/run_coverage_comparison.py</code>, grafico in <code>images/exp_a_coverage_comparison.png</code>):</p>
+<table>
+<thead>
+<tr>
+<th>Strategia</th>
+<th>Coverage media @5</th>
+<th>Hit@5 cov≥0.5</th>
+<th>Hit@5 cov≥0.7</th>
+<th>Hit@5 cov≥0.9</th>
+<th>Hit@5 Jaccard (cfr.)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>recursive_512</code></td>
+<td><strong>0.961</strong></td>
+<td><strong>0.971</strong></td>
+<td><strong>0.971</strong></td>
+<td><strong>0.971</strong></td>
+<td>0.971</td>
+</tr>
+<tr>
+<td><code>fixed_1024</code></td>
+<td>0.868</td>
+<td>0.971</td>
+<td>0.912</td>
+<td>0.824</td>
+<td>0.735</td>
+</tr>
+<tr>
+<td><code>sentence_5</code></td>
+<td>0.845</td>
+<td>0.941</td>
+<td>0.941</td>
+<td>0.853</td>
+<td>0.412</td>
+</tr>
+<tr>
+<td><code>fixed_512</code></td>
+<td>0.807</td>
+<td>0.941</td>
+<td>0.882</td>
+<td>0.765</td>
+<td>0.853</td>
+</tr>
+<tr>
+<td><code>fixed_256</code></td>
+<td>0.641</td>
+<td>0.882</td>
+<td>0.765</td>
+<td>0.294</td>
+<td>0.824</td>
+</tr>
+</tbody>
+</table>
+<p>Due conclusioni. <strong>Primo, il vincitore è confermato</strong>: <code>recursive_512</code> è primo anche sotto coverage — e poiché le due metriche hanno bias dimensionali di segno opposto, il primato non è un artefatto della metrica. <strong>Secondo, il margine reale è molto più piccolo di quanto suggerisca la tabella Jaccard</strong>: <code>sentence_5</code> passa da Hit@5 = 0.412 a 0.941 e <code>fixed_1024</code> da 0.735 a 0.971 — il loro "collasso" era in larga parte una penalità dimensionale, non incapacità di recuperare il contenuto rilevante. La lettura onesta di Exp A è quindi: <em><code>recursive_512</code> è la migliore o alla pari delle migliori, con un vantaggio reale contenuto (coverage media 0.961 vs 0.845–0.868)</em>, non <em>"le alternative falliscono"</em>. Resta una quota non eliminabile di vantaggio di casa (i suoi match esatti valgono 1.0 anche in coverage, da cui la riga ancora piatta), per cui il margine misurato va inteso come limite superiore.</p>
+<p><strong>Breakdown per categoria di query.</strong> Metriche @5 (Jaccard, θ = 0.5 — valgono quindi le cautele sul mismatch dimensionale viste sopra: i valori assoluti delle strategie non-riferimento sono sottostimati, il confronto <em>tra categorie</em> a parità di strategia resta valido) separate per tipo di query (<code>checkpoint/exp_a_category_breakdown.json</code>):</p>
 <table>
 <thead>
 <tr>
@@ -368,7 +427,7 @@ hit_at_k_textual = 1  se ∃ doc ∈ top-k : jaccard(doc, expected) ≥ 0.5
 </table>
 <p><em>(dir. = <code>in_domain_direct</code>, n=23; compl. = <code>in_domain_complex</code>, n=11)</em></p>
 <p>Due osservazioni. Primo, l'Hit@5 delle query complex è sistematicamente più alto per <strong>costruzione</strong>, non per merito: avendo più chunk attesi, basta trovarne uno qualsiasi — il confronto informativo tra categorie è il Recall@5. Secondo, ed è il dato sostanziale: <code>recursive_512</code> mantiene Recall@5 ≈ 0.94–0.96 in <em>entrambe</em> le categorie, mentre le strategie fisse si fermano a 0.41–0.66 — sulle query complex, che richiedono sintesi multi-chunk, recuperano nel top-5 solo metà-due terzi del contesto necessario. Il vantaggio di <code>recursive_512</code> non è quindi un artefatto delle query facili: regge, e in valore assoluto si conferma, proprio dove il task è più difficile.</p>
-<p><strong>Scelta della strategia di riferimento:</strong> <code>recursive_512</code> per tutti gli esperimenti successivi.</p>
+<p><strong>Scelta della strategia di riferimento:</strong> <code>recursive_512</code> per tutti gli esperimenti successivi — prima sotto entrambe le metriche (Jaccard e coverage), con la consapevolezza che il margine sulle alternative è contenuto e in parte gonfiato dal vantaggio di annotazione.</p>
 <hr />
 <h3>4.2 Esperimento B — Gate Out-of-Domain</h3>
 <p><strong>Motivazione.</strong> Un sistema RAG che risponde a domande fuori dominio con allucinazioni è peggio di uno che rifiuta esplicitamente. Il gate calcola la distanza coseno tra la query e il chunk più vicino: se superiore alla soglia θ, la query viene rifiutata prima di chiamare l'LLM.</p>
@@ -524,7 +583,7 @@ hit_at_k_textual = 1  se ∃ doc ∈ top-k : jaccard(doc, expected) ≥ 0.5
 <h3>4.3 Esperimento C — Re-ranking con CrossEncoder</h3>
 <p><strong>Setup.</strong> Pipeline a due stadi: retriever denso recupera top-10 candidati, CrossEncoder ri-ordina e seleziona i top-5 finali. Confronto su <strong>34 query in-domain</strong> (valutazione ID-based esatta).</p>
 <p><strong>Metodologia di Valutazione (ID-based vs Jaccard).</strong> Si noti una discrepanza metodologica tra le metriche di questa sezione e quelle dell'Esperimento A (§4.1):
-- Nell'Esperimento A, per confrontare equamente strategie di chunking diverse (che producono universi di ID disgiunti), si è utilizzata la similarità Jaccard testuale tra il testo recuperato e il testo annotato.
+- Nell'Esperimento A, per confrontare strategie di chunking diverse (che producono universi di ID disgiunti), si sono utilizzate metriche testuali tra testo recuperato e testo annotato (Jaccard + coverage, con i caveat discussi in §4.1).
 - In questo esperimento, poiché sia la baseline che la pipeline riordinata operano sullo stesso chunking (<code>recursive_512</code>), si applica una valutazione <strong>ID-based esatta</strong> (confronto diretto degli hash univoci del chunk atteso rispetto a quelli ritornati). Questo metodo è intrinsecamente più severo e spiega perché la baseline densa presenti valori inferiori rispetto a quelli testuali (Hit@5 di 0.912 rispetto a 0.971).</p>
 <p><strong>Risultati con <code>BAAI/bge-reranker-v2-m3</code> (Reranker multilingue), con intervalli di confidenza bootstrap (B=10 000 ricampionamenti appaiati, seed=42):</strong></p>
 <table>
@@ -986,7 +1045,7 @@ Nelle prime fasi del progetto, la query <code>q21</code> era stata inclusa senza
 <td>A — Chunking</td>
 <td>Hit@5 (textual)</td>
 <td>0.971 (recursive_512)</td>
-<td>fixed_* tra 0.73–0.85, sentence_5 = 0.412</td>
+<td>Vincitore confermato da due metriche con bias opposti (Jaccard + coverage); margine reale contenuto: coverage media 0.961 vs 0.845–0.868 delle alternative (§4.1)</td>
 </tr>
 <tr>
 <td>B — OOD Gate</td>
@@ -1043,6 +1102,7 @@ Nelle prime fasi del progetto, la query <code>q21</code> era stata inclusa senza
 <p>I risultati vanno letti come una valutazione sperimentale interna del sistema, non come una generalizzazione universale.</p>
 <p><strong>Gold set limitato.</strong> Il gold set contiene 50 query, di cui 34 in-domain e 16 tra out-of-domain e prompt injection. È sufficiente per confrontare configurazioni del progetto, ma non per stimare con alta confidenza statistica le prestazioni su tutte le possibili domande universitarie.</p>
 <p><strong>Test set separato: parziale ma esteso a retrieval e gate.</strong> Le stesse query del gold set sono state usate per scegliere soglia OOD, configurazione di retrieval e valutazione finale — un rischio di overfitting metodologico. Questo è stato mitigato con un holdout di 18 query mai usate per il tuning (§4.2): per il <strong>gate OOD</strong> (TPR 100% / FPR 10%) e per il <strong>retrieval annotato</strong> (Hit@5 = 1.000, MRR = 0.667, Recall@5 = 0.741 su n=9), entrambi coerenti con il gold set ed entrambi che escludono un overfitting grossolano. <strong>Restano tre limiti onesti:</strong> (1) l'holdout è annotato da un <strong>singolo annotatore</strong> (l'autore), quindi manca la misura di accordo inter-annotatore — si noti però che l'annotatore è indipendente dai modelli valutati (BGE-M3, DeepSeek), per cui <em>non</em> si introduce circolarità né auto-valutazione; (2) n=9 query in-domain dà intervalli di confidenza larghi; (3) <code>α</code> e la scelta del chunking non sono stati ri-ottimizzati su holdout. Una valutazione pienamente rigorosa richiederebbe uno split train/validation/test fin dall'inizio, con più annotatori indipendenti.</p>
+<p><strong>Bias di annotazione verso la strategia di riferimento (Exp A).</strong> Il gold set è annotato sui chunk di <code>recursive_512</code> e l'helper di annotazione mostra i top-20 <em>dell'indice recursive_512</em>: "rilevante" è quindi operativamente definito come "contenuto che la strategia di riferimento sa recuperare", e contenuto rilevante segmentato bene solo da altre strategie è invisibile al gold set. La doppia metrica Jaccard/coverage (§4.1) mitiga il bias <em>della metrica</em> — e infatti ridimensiona drasticamente i divari — ma non quello <em>dell'annotazione</em>: i match esatti di <code>recursive_512</code> valgono 1.0 sotto entrambe. Il margine misurato del vincitore è quindi un limite superiore. L'eliminazione completa richiederebbe un'annotazione a livello di span nel documento sorgente (offset nel PDF), indipendente da qualunque chunking, oppure il confronto end-to-end delle strategie sulla qualità delle risposte finali.</p>
 <p><strong>Annotazione umana singola e non in cieco.</strong> Le metriche del giudice LLM sono confrontate con annotazioni manuali prodotte da un solo valutatore, e l'annotazione non è avvenuta completamente alla cieca rispetto agli output del giudice (possibile ancoraggio — le ρ di §5.2 sono un limite superiore dell'accordo reale). Manca inoltre una misura di accordo inter-annotatore, utile per distinguere gli errori del judge dalle ambiguità naturali della scala 1-5. Entrambi i limiti si risolvono con un secondo annotatore indipendente e in cieco.</p>
 <p><strong>Judge LLM validato solo nella configurazione finale.</strong> Il forte accordo tra <code>deepseek-v4-pro</code> e annotazione umana vale per le 29 risposte prodotte dal generatore finale (<code>deepseek-v4-flash</code>) e non implica automaticamente che lo stesso judge sia affidabile per altri generatori, altri domini o risposte qualitativamente peggiori.</p>
 <p><strong>Singolo reranker testato.</strong> L'Esperimento C valuta un solo CrossEncoder (<code>bge-reranker-v2-m3</code>, 2024). La conclusione "il reranking non porta benefici" è quindi formalmente limitata a quel modello; con baseline a Hit@5 = 0.912 e n=34, tuttavia, lo spazio di miglioramento misurabile per qualsiasi reranker è quasi nullo (cfr. §4.3) — il vincolo è il setup sperimentale, non la generazione del modello.</p>
@@ -1054,7 +1114,7 @@ Nelle prime fasi del progetto, la query <code>q21</code> era stata inclusa senza
 <p>L'obiettivo dichiarato del progetto non è solo accademico: serve a estrarre principi trasferibili alla costruzione di sistemi RAG per clienti/aziende. Gli esperimenti A–F, letti in quest'ottica, suggeriscono sei lezioni operative.</p>
 <ol>
 <li>
-<p><strong>Il chunking è il primo investimento, non l'embedder.</strong> L'Esperimento A mostra un Hit@5 che varia da 0.41 (<code>sentence_5</code>) a 0.97 (<code>recursive_512</code>) <em>a parità di embedder e di tutto il resto</em>. In un progetto reale, adattare la strategia di segmentazione alla struttura del documento (paragrafi, sezioni, tabelle) rende più che sostituire il modello di embedding. È anche l'intervento più economico.</p>
+<p><strong>Il chunking conta, ma va misurato con metriche eque — e la metrica di valutazione è essa stessa una scelta di design.</strong> L'Esperimento A, letto con la sola Jaccard, suggeriva un divario drammatico (Hit@5 da 0.41 a 0.97); la controprova con coverage (§4.1) lo ridimensiona a un vantaggio reale ma contenuto (coverage media 0.961 vs 0.845–0.868) <em>a parità di embedder e di tutto il resto</em>. La doppia lezione per un progetto reale: (a) lo splitter allineato alla struttura del documento resta la scelta migliore ed è l'intervento più economico; (b) prima di dichiarare che una configurazione "crolla", verificare che non sia la metrica di valutazione a penalizzarla strutturalmente — un bias nella misura può costare un re-engineering immotivato.</p>
 </li>
 <li>
 <p><strong>Più componenti ≠ più qualità: misurare prima di aggiungere stadi.</strong> Reranking e hybrid search sono "best practice" diffuse, ma su questo corpus il reranker non porta benefici misurabili (§4.3) e l'hybrid peggiora rispetto al denso puro (§4.4). Lezione per il cliente: ogni stadio della pipeline va giustificato da un A/B test <em>sul suo corpus</em>, non assunto per convenzione. Stadi inutili aggiungono latenza, costo e superficie di errore.</p>
@@ -1078,7 +1138,7 @@ Nelle prime fasi del progetto, la query <code>q21</code> era stata inclusa senza
 <p><strong>Risultati principali:</strong></p>
 <ol>
 <li>
-<p><strong>Il retrieval è risolto da BGE-M3 + <code>recursive_512</code>.</strong> L'Hit@5 compreso tra il 91.2% (valutazione esatta per ID) e il 97.1% (valutazione Jaccard testuale) rappresenta un risultato eccellente per un corpus tecnico italiano non strutturato. La scelta del chunking si conferma critica: strategie a finestra fissa o basate sul numero di frasi frammentano le formule matematiche e creano contesti privi di coerenza semantica.</p>
+<p><strong>Il retrieval è risolto da BGE-M3 + <code>recursive_512</code>.</strong> L'Hit@5 compreso tra il 91.2% (valutazione esatta per ID) e il 97.1% (valutazione testuale) rappresenta un risultato eccellente per un corpus tecnico italiano non strutturato. Sulla scelta del chunking la conclusione corretta è più sfumata di quanto suggerisse la sola metrica Jaccard: <code>recursive_512</code> è la strategia migliore sotto entrambe le metriche di controllo (Jaccard e coverage, con bias di segno opposto — §4.1), ma le alternative non "falliscono": a parità di pipeline recuperano il contenuto rilevante con coverage media 0.845–0.868 contro 0.961. Il vantaggio dello splitter ricorsivo — confini allineati a paragrafi e struttura logica — è reale ma contenuto, e parte del divario apparso inizialmente era un artefatto della metrica simmetrica.</p>
 </li>
 <li>
 <p><strong>Il re-ranking con CrossEncoder non porta benefici (e non va aggiunto).</strong> L'introduzione del reranker a due stadi <code>bge-reranker-v2-m3</code> produce una differenza media negativa su tutte le metriche (Hit@5 −0.029, MRR −0.015, Recall@5 −0.051), ma il bootstrap appaiato (n=34, B=10 000) mostra che <strong>nessuna di queste differenze è statisticamente significativa</strong>: tutti gli intervalli di confidenza al 95% includono lo zero. La conclusione corretta non è quindi "il reranker degrada" ma "il reranker non migliora": uno stadio che non sposta le metriche in modo misurabile e aggiunge latenza/costo va escluso per parsimonia. Il segnale qualitativo (sensibilità all'overlap lessicale di formule matematiche, es. <code>q37</code>) resta plausibile ma non isolato dal possibile effetto di troncamento degli input.</p>

@@ -61,6 +61,43 @@ def recall_at_k_textual(
     return found / len(expected_texts)
 
 
+# ── Coverage (containment) metrics — counter-check for Exp A ────────────
+# La Jaccard simmetrica penalizza i chunk di dimensione diversa dal
+# riferimento anche a retrieval perfetto; la coverage asimmetrica no,
+# ma favorisce leggermente i chunk grandi. Riportate entrambe, i due bias
+# sono di segno opposto e delimitano il risultato vero.
+
+def coverage_of_expected(retrieved_docs: list, expected_text: str, k: int) -> float:
+    """Frazione dei token del testo atteso coperti dall'unione dei top-k."""
+    exp_tokens = set(expected_text.lower().split())
+    if not exp_tokens:
+        return 0.0
+    union: set = set()
+    for doc in retrieved_docs[:k]:
+        union |= set(doc.lower().split())
+    return len(union & exp_tokens) / len(exp_tokens)
+
+
+def coverage_at_k(retrieved_docs: list, expected_texts: list, k: int) -> float:
+    """Coverage media sui testi attesi (metrica continua, senza soglia)."""
+    if not expected_texts:
+        return float('nan')
+    covs = [coverage_of_expected(retrieved_docs, e, k) for e in expected_texts]
+    return sum(covs) / len(covs)
+
+
+def hit_at_k_coverage(
+    retrieved_docs: list, expected_texts: list, k: int, threshold: float = 0.8
+) -> float:
+    """Hit se almeno un testo atteso è coperto >= threshold dai top-k."""
+    if not expected_texts:
+        return float('nan')
+    return 1.0 if any(
+        coverage_of_expected(retrieved_docs, e, k) >= threshold
+        for e in expected_texts
+    ) else 0.0
+
+
 def mrr_textual(
     retrieved_docs: list, expected_texts: list, threshold: float = 0.5
 ) -> float:

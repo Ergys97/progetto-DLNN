@@ -98,9 +98,15 @@ python scripts/run_holdout_ood.py
 ```
 
 ### Analisi di sensibilità della soglia Jaccard (Exp A)
-Verifica che il ranking delle strategie di chunking sia robusto alla soglia di Jaccard (sweep 0.3–0.7):
+Verifica che il ranking delle strategie di chunking non sia un artefatto della soglia di Jaccard (sweep 0.3–0.7):
 ```bash
 python scripts/run_jaccard_sensitivity.py
+```
+
+### Controprova Exp A con metrica di coverage (anti-bias)
+Ripete il confronto tra strategie con una metrica di coverage asimmetrica, dal bias dimensionale opposto alla Jaccard — se il vincitore coincide, il ranking non è un artefatto della metrica (vedi report §4.1):
+```bash
+python scripts/run_coverage_comparison.py
 ```
 
 ### Holdout di retrieval (Hit@5/MRR/Recall su query nuove)
